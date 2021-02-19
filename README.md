@@ -1,5 +1,4 @@
-# P A S S
-## Panic Attack Support Suite
+# P A S S - Panic Attack Support Suite
 ### This Too Shall Pass
 
 
