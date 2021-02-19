@@ -1,0 +1,29 @@
+{
+  "expo": {
+    "name": "PASS",
+    "slug": "panic-attack-support-suite",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/ios.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#05668d"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/android-fg.png",
+        "backgroundImage": "./assets/android-bg.png"
+      }
+    }
+  }
+}
