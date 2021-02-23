@@ -1,8 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, StyleSheet, Text, Animated, Switch, Platform } from 'react-native';
+import { useSelector } from 'react-redux';
+import { View, Text, Animated, Switch, Platform } from 'react-native';
 import { color } from 'd3-color';
-
-import Colors from '../constants/colors';
 
 const PANIC_MODE = 0;
 const PREVENT_MODE = 1;
@@ -14,14 +13,67 @@ const HOLD_TIME = [1, 7];
 const OUT_TIME = [4, 8];
 
 const BreatheScreen = (props) => {
+  const [styles, setStyles] = useState({});
+  const colors = useSelector((state) => state.settings.colors);
   const [displayText, setDisplayText] = useState(IN_TEXT);
   const [displayNumber, setDisplayNumber] = useState(4);
   const [mode, setMode] = useState(PANIC_MODE);
   const animationValue = useRef(new Animated.Value(0)).current;
-  const fadedPrimary = color(Colors.primary);
+  const fadedPrimary = color(colors.primary);
   fadedPrimary.opacity = 0.3;
-  const fadedShade = color(Colors.shade3);
+  const fadedShade = color(colors.shade3);
   fadedShade.opacity = 0.3;
+
+  useEffect(() => {
+    setStyles({
+      screen: {
+        flex: 1,
+        backgroundColor: colors.light,
+      },
+      content: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+      },
+      textBox: {
+        height: 80,
+        width: '100%',
+        alignItems: 'center',
+      },
+      text: {
+        fontFamily: 'OpenSans_400Regular',
+        fontSize: 16,
+      },
+      number: {
+        fontSize: 20,
+        marginTop: 10,
+        fontFamily: 'OpenSans_600SemiBold',
+      },
+      circleOutline: {
+        width: 200,
+        height: 200,
+        borderRadius: 100,
+        borderColor: colors.primary,
+        borderWidth: 2,
+        justifyContent: 'center',
+        alignItems: 'center',
+      },
+      circleInside: {
+        backgroundColor: colors.shade3,
+        borderRadius: 200,
+      },
+      switchBox: {
+        height: 100,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+      },
+      label: {
+        fontFamily: 'OpenSans_600SemiBold',
+        margin: 10,
+      },
+    });
+  }, []);
 
   useEffect(() => {
     setTimeout(() => {
@@ -82,7 +134,7 @@ const BreatheScreen = (props) => {
               width: animationValue,
               backgroundColor: animationValue.interpolate({
                 inputRange: [0, 200],
-                outputRange: [Colors.shade3, Colors.primary],
+                outputRange: [colors.shade3, colors.primary],
               }),
             }}
           />
@@ -94,66 +146,17 @@ const BreatheScreen = (props) => {
         <Switch
           value={!!mode}
           onValueChange={toggleMode}
-          ios_backgroundColor={Colors.primary}
+          ios_backgroundColor={colors.primary}
           trackColor={{
-            false: Platform.OS === 'android' ? fadedPrimary : Colors.primary,
-            true: Platform.OS === 'android' ? fadedShade : Colors.shade3,
+            false: Platform.OS === 'android' ? fadedPrimary : colors.primary,
+            true: Platform.OS === 'android' ? fadedShade : colors.shade3,
           }}
-          thumbColor={Platform.OS === 'android' ? (mode === 0 ? Colors.primary : Colors.shade3) : undefined}
+          thumbColor={Platform.OS === 'android' ? (mode === 0 ? colors.primary : colors.shade3) : undefined}
         />
         <Text style={styles.label}>Preventative Mode</Text>
       </View>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    backgroundColor: Colors.light,
-  },
-  content: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  textBox: {
-    height: 80,
-    width: '100%',
-    alignItems: 'center',
-  },
-  text: {
-    fontFamily: 'OpenSans_400Regular',
-    fontSize: 16,
-  },
-  number: {
-    fontSize: 20,
-    marginTop: 10,
-    fontFamily: 'OpenSans_600SemiBold',
-  },
-  circleOutline: {
-    width: 200,
-    height: 200,
-    borderRadius: 100,
-    borderColor: Colors.primary,
-    borderWidth: 2,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  circleInside: {
-    backgroundColor: Colors.shade3,
-    borderRadius: 200,
-  },
-  switchBox: {
-    height: 100,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  label: {
-    fontFamily: 'OpenSans_600SemiBold',
-    margin: 10,
-  },
-});
 
 export default BreatheScreen;

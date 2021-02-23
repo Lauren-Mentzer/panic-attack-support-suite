@@ -1,9 +1,8 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { StyleSheet, ScrollView, View, Text, Button, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
+import { ScrollView, View, Text, Button, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-import Colors from '../../constants/colors';
 import Shadow from '../../constants/shadow';
 import Card from '../../components/UI/Card';
 import TouchableComponent from '../../components/UI/TouchableComponent';
@@ -15,10 +14,107 @@ import HelpButton from '../../components/HelpButton';
 
 const CommunicateSettingsScreen = (props) => {
   const dispatch = useDispatch();
+  const [styles, setStyles] = useState({});
+  const colors = useSelector((state) => state.settings.colors);
   const scrollRef = useRef();
   const flashcardList = useSelector((state) => state.flashcards.list);
   const [isAdding, setIsAdding] = useState(false);
   const [inputText, setInputText] = useState('');
+
+  useEffect(() => {
+    setStyles({
+      screen: {
+        flex: 1,
+        backgroundColor: colors.light,
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+      },
+      contents: {
+        paddingBottom: 20,
+      },
+      header: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginTop: 15,
+      },
+      headerText: {
+        fontFamily: 'OpenSans_600SemiBold',
+        fontSize: 16,
+        color: '#777',
+      },
+      card: {
+        marginVertical: 10,
+        marginHorizontal: 5,
+      },
+      input: {
+        borderColor: '#ccc',
+        borderWidth: 1,
+        padding: 15,
+        paddingTop: 15,
+        width: '100%',
+        marginBottom: 10,
+      },
+      buttonRow: {
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+      },
+      button: {
+        marginLeft: 10,
+        minWidth: 80,
+      },
+      addButton: {
+        marginVertical: 10,
+      },
+      description: {
+        marginBottom: 10,
+        fontFamily: 'OpenSans_400Regular',
+      },
+      bulletItem: {
+        paddingLeft: 15,
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        marginVertical: 5,
+      },
+      bullet: {
+        marginLeft: 10,
+        paddingTop: 2,
+        width: '80%',
+        fontFamily: 'OpenSans_400Regular',
+      },
+      bottomButton: {
+        height: 45,
+        width: '98%',
+        marginHorizontal: '1%',
+        marginVertical: 10,
+        borderRadius: 10,
+        ...Shadow,
+      },
+      bottomButtonContainer: {
+        borderRadius: 10,
+      },
+      bottomButtonText: {
+        fontFamily: 'Spartan_400Regular',
+        fontSize: 20,
+        color: 'white',
+        textAlign: 'center',
+      },
+      cardButton: {
+        marginLeft: 10,
+        width: 80,
+        height: 35,
+        borderRadius: 5,
+      },
+      cardButtonText: {
+        fontFamily: 'Spartan_400Regular',
+        color: 'white',
+        fontSize: 14,
+      },
+      smallButtonContainer: {
+        borderRadius: 5,
+      },
+    });
+  }, []);
 
   const addCardHandler = () => {
     if (!inputText.trim().length) return;
@@ -63,7 +159,7 @@ const CommunicateSettingsScreen = (props) => {
               <Text style={styles.description}>Some ideas:</Text>
               <View style={styles.bulletItem}>
                 <Ionicons
-                  color={Colors.shade3}
+                  color={colors.shade3}
                   size={24}
                   name={Platform.OS === 'ios' ? 'chevron-forward-circle-outline' : 'chevron-forward-circle'}
                 />
@@ -71,7 +167,7 @@ const CommunicateSettingsScreen = (props) => {
               </View>
               <View style={styles.bulletItem}>
                 <Ionicons
-                  color={Colors.shade3}
+                  color={colors.shade3}
                   size={24}
                   name={Platform.OS === 'ios' ? 'chevron-forward-circle-outline' : 'chevron-forward-circle'}
                 />
@@ -79,7 +175,7 @@ const CommunicateSettingsScreen = (props) => {
               </View>
               <View style={styles.bulletItem}>
                 <Ionicons
-                  color={Colors.shade3}
+                  color={colors.shade3}
                   size={24}
                   name={Platform.OS === 'ios' ? 'chevron-forward-circle-outline' : 'chevron-forward-circle'}
                 />
@@ -102,7 +198,7 @@ const CommunicateSettingsScreen = (props) => {
                 <MainButton
                   style={styles.cardButton}
                   containerStyle={styles.smallButtonContainer}
-                  color={Colors.danger}
+                  color={colors.danger}
                   onPress={deleteAddCardHandler}
                 >
                   <Text style={styles.cardButtonText}>Discard</Text>
@@ -110,7 +206,7 @@ const CommunicateSettingsScreen = (props) => {
                 <MainButton
                   style={styles.cardButton}
                   containerStyle={styles.smallButtonContainer}
-                  color={Colors.shade3}
+                  color={colors.shade3}
                   onPress={addCardHandler}
                 >
                   <Text style={styles.cardButtonText}>Save</Text>
@@ -122,7 +218,7 @@ const CommunicateSettingsScreen = (props) => {
         <MainButton
           style={styles.bottomButton}
           containerStyle={styles.bottomButtonContainer}
-          color={Colors.shade2}
+          color={colors.shade2}
           onPress={startAddCardHandler}
         >
           <Text style={styles.bottomButtonText}>Add Message</Text>
@@ -131,98 +227,5 @@ const CommunicateSettingsScreen = (props) => {
     </ScrollView>
   );
 };
-
-const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    backgroundColor: Colors.light,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-  },
-  contents: {
-    paddingBottom: 20,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: 15,
-  },
-  headerText: {
-    fontFamily: 'OpenSans_600SemiBold',
-    fontSize: 16,
-    color: '#777',
-  },
-  card: {
-    marginVertical: 10,
-    marginHorizontal: 5,
-  },
-  input: {
-    borderColor: '#ccc',
-    borderWidth: 1,
-    padding: 15,
-    paddingTop: 15,
-    width: '100%',
-    marginBottom: 10,
-  },
-  buttonRow: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-  },
-  button: {
-    marginLeft: 10,
-    minWidth: 80,
-  },
-  addButton: {
-    marginVertical: 10,
-  },
-  description: {
-    marginBottom: 10,
-    fontFamily: 'OpenSans_400Regular',
-  },
-  bulletItem: {
-    paddingLeft: 15,
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginVertical: 5,
-  },
-  bullet: {
-    marginLeft: 10,
-    paddingTop: 2,
-    width: '80%',
-    fontFamily: 'OpenSans_400Regular',
-  },
-  bottomButton: {
-    height: 45,
-    width: '98%',
-    marginHorizontal: '1%',
-    marginVertical: 10,
-    borderRadius: 10,
-    ...Shadow,
-  },
-  bottomButtonContainer: {
-    borderRadius: 10,
-  },
-  bottomButtonText: {
-    fontFamily: 'Spartan_400Regular',
-    fontSize: 20,
-    color: 'white',
-    textAlign: 'center',
-  },
-  cardButton: {
-    marginLeft: 10,
-    width: 80,
-    height: 35,
-    borderRadius: 5,
-  },
-  cardButtonText: {
-    fontFamily: 'Spartan_400Regular',
-    color: 'white',
-    fontSize: 14,
-  },
-  smallButtonContainer: {
-    borderRadius: 5,
-  },
-});
 
 export default CommunicateSettingsScreen;

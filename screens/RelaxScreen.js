@@ -1,8 +1,8 @@
 /* eslint-disable react/jsx-one-expression-per-line */
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { useSelector } from 'react-redux';
+import { View, Text } from 'react-native';
 
-import Colors from '../constants/colors';
 import Shadow from '../constants/shadow';
 import MainButton from '../components/UI/MainButton';
 
@@ -21,9 +21,51 @@ const RELAX_PROMPTS = [
 ];
 
 const RelaxScreen = (props) => {
+  const [styles, setStyles] = useState({});
+  const colors = useSelector((state) => state.settings.colors);
   const [phaseNum, setPhaseNum] = useState(0);
   const [seconds, setSeconds] = useState(0);
   const [isRelax, setIsRelax] = useState(false);
+
+  useEffect(() => {
+    setStyles({
+      screen: {
+        flex: 1,
+        backgroundColor: colors.light,
+        justifyContent: 'center',
+        alignItems: 'center',
+      },
+      promptBox: {
+        width: '75%',
+        minHeight: 50,
+      },
+      prompt: {
+        fontFamily: 'OpenSans_400Regular',
+        fontSize: 18,
+        textAlign: 'center',
+      },
+      seconds: {
+        fontFamily: 'OpenSans_600SemiBold',
+        fontSize: 32,
+        marginTop: 20,
+      },
+      button: {
+        height: 50,
+        width: '50%',
+        marginTop: 40,
+        borderRadius: 10,
+        ...Shadow,
+      },
+      buttonContainer: {
+        borderRadius: 10,
+      },
+      buttonText: {
+        color: 'white',
+        fontSize: 24,
+        fontFamily: 'Spartan_400Regular',
+      },
+    });
+  }, []);
 
   useEffect(() => {
     if (phaseNum && phaseNum !== 10) {
@@ -59,7 +101,7 @@ const RelaxScreen = (props) => {
       {!!seconds && <Text style={styles.seconds}>{seconds.toString()}</Text>}
       {phaseNum === 0 && (
         <MainButton
-          color={Colors.shade2}
+          color={colors.shade2}
           style={styles.button}
           containerStyle={styles.buttonContainer}
           onPress={onStart}
@@ -69,7 +111,7 @@ const RelaxScreen = (props) => {
       )}
       {phaseNum === 10 && (
         <MainButton
-          color={Colors.shade2}
+          color={colors.shade2}
           style={styles.button}
           containerStyle={styles.buttonContainer}
           onPress={() => props.navigation.navigate('Home')}
@@ -80,43 +122,5 @@ const RelaxScreen = (props) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    backgroundColor: Colors.light,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  promptBox: {
-    width: '75%',
-    minHeight: 50,
-  },
-  prompt: {
-    fontFamily: 'OpenSans_400Regular',
-    fontSize: 18,
-    textAlign: 'center',
-  },
-  seconds: {
-    fontFamily: 'OpenSans_600SemiBold',
-    fontSize: 32,
-    marginTop: 20,
-  },
-  button: {
-    height: 50,
-    width: '50%',
-    marginTop: 40,
-    borderRadius: 10,
-    ...Shadow,
-  },
-  buttonContainer: {
-    borderRadius: 10,
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 24,
-    fontFamily: 'Spartan_400Regular',
-  },
-});
 
 export default RelaxScreen;

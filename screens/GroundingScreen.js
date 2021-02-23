@@ -1,22 +1,78 @@
 /* eslint-disable react/jsx-one-expression-per-line */
-import React, { useState, useCallback } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import React, { useState, useCallback, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { View, Text } from 'react-native';
 import { CheckBox } from 'react-native-elements';
 
-import Colors from '../constants/colors';
 import Shadow from '../constants/shadow';
 import MainButton from '../components/UI/MainButton';
-import TouchableComponent from '../components/UI/TouchableComponent';
 
 const GROUNDING_SENSES = ['see', 'feel', 'hear', 'smell', 'taste'];
 
 const GroundingScreen = (props) => {
+  const [styles, setStyles] = useState({});
+  const colors = useSelector((state) => state.settings.colors);
   const [phaseNum, setPhaseNum] = useState(5);
   const [checkbox1, setCheckbox1] = useState(false);
   const [checkbox2, setCheckbox2] = useState(false);
   const [checkbox3, setCheckbox3] = useState(false);
   const [checkbox4, setCheckbox4] = useState(false);
   const [checkbox5, setCheckbox5] = useState(false);
+
+  useEffect(() => {
+    setStyles({
+      screen: {
+        flex: 1,
+        backgroundColor: colors.light,
+      },
+      prompt: {
+        marginLeft: 50,
+        fontSize: 18,
+        marginTop: 50,
+        fontFamily: 'OpenSans_400Regular',
+      },
+      checkboxContainer: {
+        marginHorizontal: 50,
+        marginTop: 50,
+      },
+      checkbox: {
+        marginVertical: 12,
+        backgroundColor: 'white',
+        ...Shadow,
+      },
+      checked: {
+        color: '#bfbfbf',
+        textDecorationLine: 'line-through',
+      },
+      finishedContainer: {
+        height: '50%',
+        marginTop: '25%',
+        alignItems: 'center',
+        justifyContent: 'center',
+      },
+      finishedText: {
+        width: '75%',
+        fontSize: 18,
+        textAlign: 'center',
+        fontFamily: 'OpenSans_400Regular',
+      },
+      button: {
+        height: 50,
+        width: '50%',
+        marginTop: 40,
+        borderRadius: 10,
+        ...Shadow,
+      },
+      buttonContainer: {
+        borderRadius: 10,
+      },
+      title: {
+        color: 'white',
+        fontSize: 24,
+        fontFamily: 'Spartan_400Regular',
+      },
+    });
+  }, []);
 
   const check = useCallback(
     (newValue, setFunc) => {
@@ -55,7 +111,7 @@ const GroundingScreen = (props) => {
             onPress={() => check(!checkbox1, setCheckbox1)}
             textStyle={checkbox1 ? styles.checked : undefined}
             containerStyle={styles.checkbox}
-            checkedColor={Colors.shade3}
+            checkedColor={colors.shade3}
             fontFamily="OpenSans_600SemiBold"
           />
         )}
@@ -66,7 +122,7 @@ const GroundingScreen = (props) => {
             onPress={(newValue) => check(newValue, setCheckbox2)}
             textStyle={checkbox2 ? styles.checked : undefined}
             containerStyle={styles.checkbox}
-            checkedColor={Colors.shade3}
+            checkedColor={colors.shade3}
             fontFamily="OpenSans_600SemiBold"
           />
         )}
@@ -77,7 +133,7 @@ const GroundingScreen = (props) => {
             onPress={(newValue) => check(newValue, setCheckbox3)}
             textStyle={checkbox3 ? styles.checked : undefined}
             containerStyle={styles.checkbox}
-            checkedColor={Colors.shade3}
+            checkedColor={colors.shade3}
             fontFamily="OpenSans_600SemiBold"
           />
         )}
@@ -88,7 +144,7 @@ const GroundingScreen = (props) => {
             onPress={(newValue) => check(newValue, setCheckbox4)}
             textStyle={checkbox4 ? styles.checked : undefined}
             containerStyle={styles.checkbox}
-            checkedColor={Colors.shade3}
+            checkedColor={colors.shade3}
             fontFamily="OpenSans_600SemiBold"
           />
         )}
@@ -99,7 +155,7 @@ const GroundingScreen = (props) => {
             onPress={(newValue) => check(newValue, setCheckbox5)}
             textStyle={checkbox5 ? styles.checked : undefined}
             containerStyle={styles.checkbox}
-            checkedColor={Colors.shade3}
+            checkedColor={colors.shade3}
             fontFamily="OpenSans_600SemiBold"
           />
         )}
@@ -111,7 +167,7 @@ const GroundingScreen = (props) => {
             your surroundings.
           </Text>
           <MainButton
-            color={Colors.shade2}
+            color={colors.shade2}
             style={styles.button}
             containerStyle={styles.buttonContainer}
             onPress={() => props.navigation.navigate('Home')}
@@ -123,58 +179,5 @@ const GroundingScreen = (props) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    backgroundColor: Colors.light,
-  },
-  prompt: {
-    marginLeft: 50,
-    fontSize: 18,
-    marginTop: 50,
-    fontFamily: 'OpenSans_400Regular',
-  },
-  checkboxContainer: {
-    marginHorizontal: 50,
-    marginTop: 50,
-  },
-  checkbox: {
-    marginVertical: 12,
-    backgroundColor: 'white',
-    ...Shadow,
-  },
-  checked: {
-    color: '#bfbfbf',
-    textDecorationLine: 'line-through',
-  },
-  finishedContainer: {
-    height: '50%',
-    marginTop: '25%',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  finishedText: {
-    width: '75%',
-    fontSize: 18,
-    textAlign: 'center',
-    fontFamily: 'OpenSans_400Regular',
-  },
-  button: {
-    height: 50,
-    width: '50%',
-    marginTop: 40,
-    borderRadius: 10,
-    ...Shadow,
-  },
-  buttonContainer: {
-    borderRadius: 10,
-  },
-  title: {
-    color: 'white',
-    fontSize: 24,
-    fontFamily: 'Spartan_400Regular',
-  },
-});
 
 export default GroundingScreen;

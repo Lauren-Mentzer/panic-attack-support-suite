@@ -1,13 +1,14 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { StyleSheet, View, FlatList, Platform, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import MainButton from './MainButton';
 import Card from './Card';
-import Colors from '../../constants/colors';
 
 const Slider = (props) => {
   const { dataList, cardWidth, sliderPosition, changeSliderPosition } = props;
+  const colors = useSelector((state) => state.settings.colors);
   const [currentIndex, setCurrentIndex] = useState(0);
   const sliderRef = useRef();
 
@@ -44,7 +45,7 @@ const Slider = (props) => {
       <MainButton style={styles.arrow} onPress={goLeftHandler} disabled={currentIndex === 0}>
         <Ionicons
           size={32}
-          color={currentIndex === 0 ? '#ccc' : Colors.primary}
+          color={currentIndex === 0 ? '#ccc' : colors.primary}
           name={Platform.select({ ios: 'ios-arrow-back', android: 'md-arrow-back' })}
         />
       </MainButton>
@@ -73,7 +74,7 @@ const Slider = (props) => {
       <MainButton style={styles.arrow} onPress={goRightHandler} disabled={currentIndex === dataList.length - 1}>
         <Ionicons
           size={32}
-          color={currentIndex === dataList.length - 1 ? '#ccc' : Colors.primary}
+          color={currentIndex === dataList.length - 1 ? '#ccc' : colors.primary}
           name={Platform.select({ ios: 'ios-arrow-forward', android: 'md-arrow-forward' })}
         />
       </MainButton>

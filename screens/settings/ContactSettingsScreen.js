@@ -1,9 +1,8 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { StyleSheet, ScrollView, Text, View, Platform, Alert } from 'react-native';
+import { ScrollView, Text, View, Platform, Alert } from 'react-native';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 
-import Colors from '../../constants/colors';
 import Input from '../../components/UI/Input';
 import HeaderButton from '../../components/UI/HeaderButton';
 import { editContact } from '../../store/actions/contact';
@@ -12,6 +11,8 @@ import HelpButton from '../../components/HelpButton';
 const ContactSettingsScreen = (props) => {
   const { navigation } = props;
   const dispatch = useDispatch();
+  const [styles, setStyles] = useState({});
+  const colors = useSelector((state) => state.settings.colors);
   const contact1 = useSelector((state) => state.contact.contact1);
   const contact2 = useSelector((state) => state.contact.contact2);
   const [contact1Name, setContact1Name] = useState(contact1.nickname);
@@ -21,6 +22,44 @@ const ContactSettingsScreen = (props) => {
   const [contact2Phone, setContact2Phone] = useState(contact2.phone);
   const [contact2Message, setContact2Message] = useState(contact2.message);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+
+  useEffect(() => {
+    setStyles({
+      screen: {
+        flex: 1,
+        backgroundColor: colors.light,
+        paddingHorizontal: 20,
+      },
+      contents: {
+        paddingBottom: 20,
+      },
+      label: {
+        fontFamily: 'OpenSans_600SemiBold',
+        fontSize: 16,
+        color: '#777',
+        marginTop: 30,
+      },
+      headerLabel: {
+        fontFamily: 'OpenSans_600SemiBold',
+        fontSize: 16,
+        color: '#777',
+      },
+      headerRow: {
+        flexDirection: 'row',
+        width: '100%',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginTop: 30,
+      },
+      inputWrapper: {
+        marginVertical: 10,
+      },
+      description: {
+        marginBottom: 10,
+        fontFamily: 'OpenSans_400Regular',
+      },
+    });
+  }, []);
 
   const save = useCallback(() => {
     dispatch(
@@ -168,41 +207,5 @@ const ContactSettingsScreen = (props) => {
     </ScrollView>
   );
 };
-
-const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    backgroundColor: Colors.light,
-    paddingHorizontal: 20,
-  },
-  contents: {
-    paddingBottom: 20,
-  },
-  label: {
-    fontFamily: 'OpenSans_600SemiBold',
-    fontSize: 16,
-    color: '#777',
-    marginTop: 30,
-  },
-  headerLabel: {
-    fontFamily: 'OpenSans_600SemiBold',
-    fontSize: 16,
-    color: '#777',
-  },
-  headerRow: {
-    flexDirection: 'row',
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: 30,
-  },
-  inputWrapper: {
-    marginVertical: 10,
-  },
-  description: {
-    marginBottom: 10,
-    fontFamily: 'OpenSans_400Regular',
-  },
-});
 
 export default ContactSettingsScreen;

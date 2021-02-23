@@ -1,4 +1,4 @@
-export default {
+export const Default = {
   primary: '#05668d',
   shade1: '#028090',
   shade2: '#00a896',

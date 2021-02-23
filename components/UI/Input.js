@@ -1,7 +1,6 @@
-import React, { useReducer, useEffect } from 'react';
-import { View, TextInput, StyleSheet, Text } from 'react-native';
-
-import Colors from '../../constants/colors';
+import React, { useReducer, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { View, TextInput, Text } from 'react-native';
 
 const INPUT_CHANGE = 'INPUT_CHANGE';
 const INPUT_BLUR = 'INPUT_BLUR';
@@ -32,11 +31,40 @@ const Input = (props) => {
     maxLength,
     onInputChange,
   } = props;
+  const [styles, setStyles] = useState({});
+  const colors = useSelector((state) => state.settings.colors);
   const [inputState, dispatch] = useReducer(inputReducer, {
     value: initialValue || '',
     isValid: initiallyValid,
     touched: false,
   });
+
+  useEffect(() => {
+    setStyles({
+      formControl: {
+        width: '100%',
+      },
+      label: {
+        marginVertical: 8,
+        fontFamily: 'OpenSans_600SemiBold',
+      },
+      input: {
+        paddingHorizontal: 2,
+        paddingVertical: 5,
+        borderBottomColor: '#ccc',
+        borderBottomWidth: 1,
+        fontFamily: 'OpenSans_400Regular',
+      },
+      errorContainer: {
+        marginVertical: 5,
+      },
+      error: {
+        color: colors.danger,
+        fontSize: 13,
+        fontFamily: 'OpenSans_400Regular',
+      },
+    });
+  }, []);
 
   useEffect(() => {
     if (inputState.touched) {
@@ -90,30 +118,5 @@ const Input = (props) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  formControl: {
-    width: '100%',
-  },
-  label: {
-    marginVertical: 8,
-    fontFamily: 'OpenSans_600SemiBold',
-  },
-  input: {
-    paddingHorizontal: 2,
-    paddingVertical: 5,
-    borderBottomColor: '#ccc',
-    borderBottomWidth: 1,
-    fontFamily: 'OpenSans_400Regular',
-  },
-  errorContainer: {
-    marginVertical: 5,
-  },
-  error: {
-    color: Colors.danger,
-    fontSize: 13,
-    fontFamily: 'OpenSans_400Regular',
-  },
-});
 
 export default Input;

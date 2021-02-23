@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { StyleSheet, ScrollView, View, Text, Platform, Switch } from 'react-native';
+import { ScrollView, View, Text, Platform, Switch } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { color } from 'd3-color';
 import { CheckBox } from 'react-native-elements';
 
-import Colors from '../constants/colors';
 import TouchableComponent from '../components/UI/TouchableComponent';
 import BottomDrawer from '../components/UI/BottomDrawer';
 import { setEmergency, setEnabled, COLOR_PALETTES, setColorPalette } from '../store/actions/settings';
@@ -26,12 +25,71 @@ const FEATURES_TEXT = [
 
 const SettingsScreen = (props) => {
   const dispatch = useDispatch();
+  const [styles, setStyles] = useState({});
+  const colors = useSelector((state) => state.settings.colors);
   const enabledFeatures = useSelector((state) => state.settings.enabled);
   const emergencyInfo = useSelector((state) => state.settings.emergencyInfo);
   const colorPalette = useSelector((state) => state.settings.colorPalette);
-  const [colorsSliderOpen, setColorsSliderOpen] = useState(false);
-  const fadedColor = color(Colors.shade2);
+  const [colorsSliderOpen, setcolorsSliderOpen] = useState(false);
+  const fadedColor = color(colors.shade2);
   fadedColor.opacity = 0.3;
+
+  useEffect(() => {
+    setStyles({
+      screen: {
+        flex: 1,
+        backgroundColor: colors.light,
+      },
+      container: {
+        width: '80%',
+        marginHorizontal: '10%',
+        paddingBottom: 40,
+      },
+      label: {
+        fontFamily: 'OpenSans_600SemiBold',
+        fontSize: 16,
+        color: '#777',
+        marginTop: 30,
+      },
+      switchItem: {
+        width: '100%',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginTop: 25,
+      },
+      itemLeft: {
+        width: '80%',
+      },
+      title: {
+        fontFamily: 'OpenSans_600SemiBold',
+        fontSize: 15,
+      },
+      description: {
+        fontFamily: 'OpenSans_400Regular',
+        color: '#777',
+        fontSize: 15,
+      },
+      subItem: {
+        marginLeft: 10,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginTop: 10,
+      },
+      divider: {
+        height: 1,
+        width: '140%',
+        marginLeft: '-20%',
+        backgroundColor: '#ccc',
+        marginTop: 20,
+      },
+      checkbox: {
+        backgroundColor: 'transparent',
+        borderWidth: 0,
+      },
+    });
+  }, [colors]);
 
   const toggleFeature = (feature) => {
     const newValue = !enabledFeatures[feature];
@@ -42,7 +100,7 @@ const SettingsScreen = (props) => {
     dispatch(setEmergency(!emergencyInfo));
   };
 
-  const chooseColors = (palette) => {
+  const choosecolors = (palette) => {
     dispatch(setColorPalette(palette));
   };
 
@@ -64,9 +122,9 @@ const SettingsScreen = (props) => {
               ios_backgroundColor="lightgray"
               trackColor={{
                 false: 'gray',
-                true: Platform.OS === 'ios' ? Colors.shade3 : fadedColor,
+                true: Platform.OS === 'ios' ? colors.shade3 : fadedColor,
               }}
-              thumbColor={Platform.OS === 'android' ? (emergencyInfo ? Colors.shade2 : 'lightgray') : undefined}
+              thumbColor={Platform.OS === 'android' ? (emergencyInfo ? colors.shade2 : 'lightgray') : undefined}
             />
           </View>
           {emergencyInfo && (
@@ -80,7 +138,7 @@ const SettingsScreen = (props) => {
               </View>
             </TouchableComponent>
           )}
-          <TouchableComponent activeOpacity={0.5} onPress={() => setColorsSliderOpen((value) => !value)}>
+          <TouchableComponent activeOpacity={0.5} onPress={() => setcolorsSliderOpen((value) => !value)}>
             <View style={styles.switchItem}>
               <Text style={styles.title}>Color Theme</Text>
               <Ionicons name="chevron-forward" size={25} />
@@ -103,10 +161,10 @@ const SettingsScreen = (props) => {
                     ios_backgroundColor="lightgray"
                     trackColor={{
                       false: 'gray',
-                      true: Platform.OS === 'ios' ? Colors.shade3 : fadedColor,
+                      true: Platform.OS === 'ios' ? colors.shade3 : fadedColor,
                     }}
                     thumbColor={
-                      Platform.OS === 'android' ? (enabledFeatures[key] ? Colors.shade2 : 'lightgray') : undefined
+                      Platform.OS === 'android' ? (enabledFeatures[key] ? colors.shade2 : 'lightgray') : undefined
                     }
                   />
                 </View>
@@ -123,16 +181,16 @@ const SettingsScreen = (props) => {
           })}
         </View>
       </ScrollView>
-      <BottomDrawer drawerOpen={colorsSliderOpen} setDrawerOpen={setColorsSliderOpen}>
+      <BottomDrawer drawerOpen={colorsSliderOpen} setDrawerOpen={setcolorsSliderOpen}>
         {COLOR_PALETTES.map((name) => (
-          <TouchableComponent activeOpacity={0.5} key={name} onPress={() => chooseColors(name)}>
+          <TouchableComponent activeOpacity={0.5} key={name} onPress={() => choosecolors(name)}>
             <CheckBox
               title={name}
-              checkedColor={Colors.shade3}
+              checkedColor={colors.shade3}
               checkedIcon="dot-circle-o"
               uncheckedIcon="circle-o"
               fontFamily="OpenSans_600SemiBold"
-              onPress={() => chooseColors(name)}
+              onPress={() => choosecolors(name)}
               checked={name === colorPalette}
               containerStyle={styles.checkbox}
             />
@@ -142,60 +200,5 @@ const SettingsScreen = (props) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    backgroundColor: Colors.light,
-  },
-  container: {
-    width: '80%',
-    marginHorizontal: '10%',
-    paddingBottom: 40,
-  },
-  label: {
-    fontFamily: 'OpenSans_600SemiBold',
-    fontSize: 16,
-    color: '#777',
-    marginTop: 30,
-  },
-  switchItem: {
-    width: '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: 25,
-  },
-  itemLeft: {
-    width: '80%',
-  },
-  title: {
-    fontFamily: 'OpenSans_600SemiBold',
-    fontSize: 15,
-  },
-  description: {
-    fontFamily: 'OpenSans_400Regular',
-    color: '#777',
-    fontSize: 15,
-  },
-  subItem: {
-    marginLeft: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: 10,
-  },
-  divider: {
-    height: 1,
-    width: '140%',
-    marginLeft: '-20%',
-    backgroundColor: '#ccc',
-    marginTop: 20,
-  },
-  checkbox: {
-    backgroundColor: 'transparent',
-    borderWidth: 0,
-  },
-});
 
 export default SettingsScreen;
