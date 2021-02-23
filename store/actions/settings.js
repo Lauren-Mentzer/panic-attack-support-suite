@@ -1,7 +1,6 @@
 import { storeData } from '../../helpers/storage';
 import {
   COLOR_PALETTE,
-  SHAKE_ENABLED,
   EMERGENCY_ENABLED,
   BREATHE_ENABLED,
   GROUNDING_ENABLED,
@@ -18,7 +17,6 @@ export const COLOR_PALETTES = ['Default'];
 export const SET_COLORS = 'SET_COLORS';
 export const SET_COLOR_PALETTE = 'SET_COLOR_PALETTE';
 export const SET_ENABLED = 'SET_ENABLED';
-export const SET_SHAKE = 'SET_SHAKE';
 export const SET_EMERGENCY = 'SET_EMERGENCY';
 
 export const setColorPalette = (palette) => {
@@ -79,13 +77,6 @@ export const setEnabled = (feature, enabled) => {
   };
 };
 
-export const setShake = (value) => {
-  return (dispatch) => {
-    storeData(SHAKE_ENABLED, value);
-    dispatch(setShakeAction(value));
-  };
-};
-
 export const setEmergency = (value) => {
   return (dispatch) => {
     storeData(EMERGENCY_ENABLED, value);
@@ -112,13 +103,6 @@ export const setEnabledAction = (feature, enabled) => {
     type: SET_ENABLED,
     feature,
     enabled,
-  };
-};
-
-export const setShakeAction = (value) => {
-  return {
-    type: SET_SHAKE,
-    value,
   };
 };
 

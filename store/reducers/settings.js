@@ -1,4 +1,4 @@
-import { SET_COLORS, SET_ENABLED, SET_SHAKE, SET_EMERGENCY, SET_COLOR_PALETTE } from '../actions/settings';
+import { SET_COLORS, SET_ENABLED, SET_EMERGENCY, SET_COLOR_PALETTE } from '../actions/settings';
 
 const initialState = {
   colors: {
@@ -19,7 +19,6 @@ const initialState = {
     communicate: true,
     contact: true,
   },
-  openOnShake: true,
   emergencyInfo: true,
 };
 
@@ -34,8 +33,6 @@ const settingsReducer = (state = initialState, action) => {
       tempState = { ...state.enabled };
       tempState[action.feature] = action.enabled;
       return { ...state, enabled: tempState };
-    case SET_SHAKE:
-      return { ...state, openOnShake: action.value };
     case SET_EMERGENCY:
       return { ...state, emergencyInfo: action.value };
     default:

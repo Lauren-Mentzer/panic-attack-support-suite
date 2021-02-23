@@ -7,7 +7,6 @@ import {
   AFFIRMATIONS,
   AFFIRMATIONS_ENABLED,
   EMERGENCY_ENABLED,
-  SHAKE_ENABLED,
   BREATHE_ENABLED,
   GROUNDING_ENABLED,
   RELAX_ENABLED,
@@ -16,7 +15,7 @@ import {
   CONTACT_ENABLED,
 } from '../constants/keys';
 import { setContacts } from '../store/actions/contact';
-import { setColorPalette, setShakeAction, setEmergencyAction, setEnabledAction } from '../store/actions/settings';
+import { setColorPalette, setEmergencyAction, setEnabledAction } from '../store/actions/settings';
 import { setList } from '../store/actions/flashcards';
 import { setRemindersList, setPositiveAffirmationsAction, enableAffirmationAction } from '../store/actions/reminders';
 import { saveInfoAction } from '../store/actions/medInfo';
@@ -43,9 +42,6 @@ const init = () => {
             break;
           case EMERGENCY_ENABLED:
             dispatch(setEmergencyAction(JSON.parse(pair[1])));
-            break;
-          case SHAKE_ENABLED:
-            dispatch(setShakeAction(JSON.parse(pair[1])));
             break;
           case BREATHE_ENABLED:
             dispatch(setEnabledAction('breathe', JSON.parse(pair[1])));

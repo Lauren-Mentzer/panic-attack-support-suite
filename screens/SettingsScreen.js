@@ -8,7 +8,7 @@ import { CheckBox } from 'react-native-elements';
 import Colors from '../constants/colors';
 import TouchableComponent from '../components/UI/TouchableComponent';
 import BottomDrawer from '../components/UI/BottomDrawer';
-import { setEmergency, setEnabled, setShake, COLOR_PALETTES, setColorPalette } from '../store/actions/settings';
+import { setEmergency, setEnabled, COLOR_PALETTES, setColorPalette } from '../store/actions/settings';
 
 const FEATURES_TEXT = [
   ['Breathe', 'Guided breathing exercises to help slow your breathing'],
@@ -27,7 +27,6 @@ const FEATURES_TEXT = [
 const SettingsScreen = (props) => {
   const dispatch = useDispatch();
   const enabledFeatures = useSelector((state) => state.settings.enabled);
-  const openOnShake = useSelector((state) => state.settings.openOnShake);
   const emergencyInfo = useSelector((state) => state.settings.emergencyInfo);
   const colorPalette = useSelector((state) => state.settings.colorPalette);
   const [colorsSliderOpen, setColorsSliderOpen] = useState(false);
@@ -37,10 +36,6 @@ const SettingsScreen = (props) => {
   const toggleFeature = (feature) => {
     const newValue = !enabledFeatures[feature];
     dispatch(setEnabled(feature, newValue));
-  };
-
-  const toggleShake = () => {
-    dispatch(setShake(!openOnShake));
   };
 
   const toggleEmergency = () => {
@@ -85,22 +80,6 @@ const SettingsScreen = (props) => {
               </View>
             </TouchableComponent>
           )}
-          <View style={styles.switchItem}>
-            <View style={styles.itemLeft}>
-              <Text style={styles.title}>Open on Shake</Text>
-              <Text style={styles.description}>Open the application when you shake your phone</Text>
-            </View>
-            <Switch
-              value={openOnShake}
-              onValueChange={toggleShake}
-              ios_backgroundColor="lightgray"
-              trackColor={{
-                false: 'gray',
-                true: Platform.OS === 'ios' ? Colors.shade3 : fadedColor,
-              }}
-              thumbColor={Platform.OS === 'android' ? (openOnShake ? Colors.shade2 : 'lightgray') : undefined}
-            />
-          </View>
           <TouchableComponent activeOpacity={0.5} onPress={() => setColorsSliderOpen((value) => !value)}>
             <View style={styles.switchItem}>
               <Text style={styles.title}>Color Theme</Text>
