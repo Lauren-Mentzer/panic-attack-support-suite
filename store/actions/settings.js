@@ -11,8 +11,7 @@ import {
 } from '../../constants/keys';
 import { Default, Green, Dusk, Greyscale, Dark } from '../../constants/colors';
 
-// export const COLOR_PALETTES = ['Default', 'Green', 'Dusk', 'Greyscale', 'Dark'];
-export const COLOR_PALETTES = ['Default'];
+export const COLOR_PALETTES = ['Default', 'Green', 'Dusk', 'Greyscale', 'Dark'];
 
 export const SET_COLORS = 'SET_COLORS';
 export const SET_COLOR_PALETTE = 'SET_COLOR_PALETTE';

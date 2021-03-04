@@ -1,13 +1,48 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import { View, StyleSheet, Text, Animated } from 'react-native';
+import { View, Text, Animated } from 'react-native';
 
 import MainButton from '../components/UI/MainButton';
-import Colors from '../constants/colors';
 import Shadow from '../constants/shadow';
 import { POSITIVE_AFFIRMATIONS } from '../store/actions/reminders';
 
-const RemindersScreen = (props) => {
+const RemindersScreen = () => {
+  const colors = useSelector((state) => state.settings.colors);
+  const [styles] = useState({
+    screen: {
+      flex: 1,
+      backgroundColor: colors.light,
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    reminderBox: {
+      width: '75%',
+    },
+    reminderText: {
+      fontFamily: 'OpenSans_400Regular',
+      fontSize: 20,
+      marginTop: '50%',
+      textAlign: 'center',
+      color: colors.text,
+    },
+    button: {
+      height: 50,
+      width: '50%',
+      marginTop: 40,
+      marginBottom: 150,
+      borderRadius: 10,
+      ...Shadow,
+    },
+    buttonContainer: {
+      borderRadius: 10,
+    },
+    buttonText: {
+      color: 'white',
+      fontFamily: 'Spartan_400Regular',
+      fontSize: 24,
+    },
+  });
+
   const animatedValue = useRef(new Animated.Value(1)).current;
   const remindersList = useSelector((state) => state.reminders.list);
   const enablePositiveAffirmations = useSelector((state) => state.reminders.enablePositiveAffirmations);
@@ -72,7 +107,7 @@ const RemindersScreen = (props) => {
       </Animated.View>
 
       <MainButton
-        color={Colors.shade2}
+        color={colors.shade2}
         style={styles.button}
         containerStyle={styles.buttonContainer}
         onPress={nextHandler}
@@ -82,39 +117,5 @@ const RemindersScreen = (props) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    backgroundColor: Colors.light,
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  reminderBox: {
-    width: '75%',
-  },
-  reminderText: {
-    fontFamily: 'OpenSans_400Regular',
-    fontSize: 20,
-    marginTop: '50%',
-    textAlign: 'center',
-  },
-  button: {
-    height: 50,
-    width: '50%',
-    marginTop: 40,
-    marginBottom: 150,
-    borderRadius: 10,
-    ...Shadow,
-  },
-  buttonContainer: {
-    borderRadius: 10,
-  },
-  buttonText: {
-    color: 'white',
-    fontFamily: 'Spartan_400Regular',
-    fontSize: 24,
-  },
-});
 
 export default RemindersScreen;

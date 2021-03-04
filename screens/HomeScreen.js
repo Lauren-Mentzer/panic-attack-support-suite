@@ -1,22 +1,60 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { View, StyleSheet, SafeAreaView, Text, Platform } from 'react-native';
+import { View, SafeAreaView, Text, Platform } from 'react-native';
 import { interpolateRgb } from 'd3-interpolate';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 
-import Colors from '../constants/colors';
 import Shadow from '../constants/shadow';
 import MainButton from '../components/UI/MainButton';
 import HeaderButton from '../components/UI/HeaderButton';
 
 const BUTTON_NAMES = ['Breathe', 'Grounding', 'Relax', 'Reminders', 'Communicate', 'Contact'];
 
+const getStyles = (colors) => {
+  return {
+    container: {
+      flex: 1,
+      backgroundColor: colors.light,
+    },
+    screen: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      margin: 20,
+    },
+    button: {
+      height: '22%',
+      width: '95%',
+      marginVertical: 10,
+      borderRadius: 10,
+      ...Shadow,
+    },
+    buttonContainer: {
+      borderRadius: 10,
+    },
+    title: {
+      color: 'white',
+      fontSize: 30,
+      letterSpacing: 4,
+      fontFamily: 'Spartan_400Regular',
+    },
+  };
+};
+
 const HomeScreen = (props) => {
+  const colors = useSelector((state) => state.settings.colors);
+  const colorMode = useSelector((state) => state.settings.colorPalette);
+  const [styles, setStyles] = useState(getStyles(colors));
+
   const enabledFeatures = useSelector((state) => state.settings.enabled);
   const emergencyInfo = useSelector((state) => state.settings.emergencyInfo);
   const buttonNum = Object.keys(enabledFeatures).filter((key) => enabledFeatures[key]).length;
   const height = 100 / (buttonNum + 2);
-  const interpolater = interpolateRgb(Colors.shade1, Colors.shade3);
+  const interpolater = interpolateRgb(colors.shade1, colors.shade3);
+
+  useEffect(() => {
+    setStyles(getStyles(colors));
+  }, [colors]);
 
   useEffect(() => {
     props.navigation.setOptions({
@@ -27,6 +65,12 @@ const HomeScreen = (props) => {
               title="Menu"
               iconName={Platform.OS === 'ios' ? 'medical-sharp' : 'medical'}
               onPress={() => props.navigation.navigate('Emergency Information')}
+              buttonStyle={{
+                color: Platform.select({
+                  ios: colorMode === 'Dark' ? 'white' : colors.primary,
+                  android: 'white',
+                }),
+              }}
             />
           </HeaderButtons>
         ) : null;
@@ -59,34 +103,5 @@ const HomeScreen = (props) => {
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.light,
-  },
-  screen: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    margin: 20,
-  },
-  button: {
-    height: '22%',
-    width: '95%',
-    marginVertical: 10,
-    borderRadius: 10,
-    ...Shadow,
-  },
-  buttonContainer: {
-    borderRadius: 10,
-  },
-  title: {
-    color: 'white',
-    fontSize: 30,
-    letterSpacing: 4,
-    fontFamily: 'Spartan_400Regular',
-  },
-});
 
 export default HomeScreen;

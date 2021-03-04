@@ -1,9 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { StyleSheet, ScrollView, View, Platform, Alert, Text } from 'react-native';
+import { ScrollView, View, Platform, Alert, Text } from 'react-native';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 
-import Colors from '../../constants/colors';
 import Input from '../../components/UI/Input';
 import { saveInfo } from '../../store/actions/medInfo';
 import HeaderButton from '../../components/UI/HeaderButton';
@@ -12,6 +11,40 @@ import HelpButton from '../../components/HelpButton';
 const InfoSettingsScreen = (props) => {
   const dispatch = useDispatch();
   const { navigation } = props;
+  const colors = useSelector((state) => state.settings.colors);
+  const colorMode = useSelector((state) => state.settings.colorPalette);
+  const [styles] = useState({
+    screen: {
+      flex: 1,
+      backgroundColor: colors.light,
+      paddingVertical: 10,
+      paddingHorizontal: 20,
+    },
+    contents: {
+      paddingBottom: 20,
+    },
+    inputWrapper: {
+      marginVertical: 10,
+    },
+    headerLabel: {
+      fontFamily: 'OpenSans_600SemiBold',
+      fontSize: 16,
+      color: colors.title,
+    },
+    headerRow: {
+      flexDirection: 'row',
+      width: '100%',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginTop: 10,
+    },
+    description: {
+      marginBottom: 10,
+      fontFamily: 'OpenSans_400Regular',
+      color: colors.text,
+    },
+  });
+
   const storeName = useSelector((state) => state.medInfo.name);
   const storeBirthday = useSelector((state) => state.medInfo.birthday);
   const storeAddress = useSelector((state) => state.medInfo.address);
@@ -40,7 +73,17 @@ const InfoSettingsScreen = (props) => {
     props.navigation.setOptions({
       headerRight: () => (
         <HeaderButtons HeaderButtonComponent={HeaderButton}>
-          <Item title="Settings" iconName={Platform.OS === 'ios' ? 'save-sharp' : 'save'} onPress={save} />
+          <Item
+            title="Settings"
+            iconName={Platform.OS === 'ios' ? 'save-sharp' : 'save'}
+            onPress={save}
+            buttonStyle={{
+              color: Platform.select({
+                ios: colorMode === 'Dark' ? 'white' : colors.primary,
+                android: 'white',
+              }),
+            }}
+          />
         </HeaderButtons>
       ),
     });
@@ -180,36 +223,5 @@ const InfoSettingsScreen = (props) => {
     </ScrollView>
   );
 };
-
-const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    backgroundColor: Colors.light,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-  },
-  contents: {
-    paddingBottom: 20,
-  },
-  inputWrapper: {
-    marginVertical: 10,
-  },
-  headerLabel: {
-    fontFamily: 'OpenSans_600SemiBold',
-    fontSize: 16,
-    color: '#777',
-  },
-  headerRow: {
-    flexDirection: 'row',
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: 10,
-  },
-  description: {
-    marginBottom: 10,
-    fontFamily: 'OpenSans_400Regular',
-  },
-});
 
 export default InfoSettingsScreen;

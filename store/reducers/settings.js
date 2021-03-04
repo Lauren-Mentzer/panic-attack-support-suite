@@ -26,7 +26,7 @@ const settingsReducer = (state = initialState, action) => {
   let tempState;
   switch (action.type) {
     case SET_COLORS:
-      return { ...state, colors: state.colors };
+      return { ...state, colors: action.palette };
     case SET_COLOR_PALETTE:
       return { ...state, colorPalette: action.palette };
     case SET_ENABLED:

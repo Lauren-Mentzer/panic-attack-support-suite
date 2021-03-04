@@ -24,6 +24,8 @@
         "foregroundImage": "./assets/android-fg.png",
         "backgroundImage": "./assets/android-bg.png"
       }
-    }
+    },
+    "description": "wip application to help users who experience panic attacks",
+    "githubUrl": "https://github.com/Lauren-Mentzer/panic-attack-support-suite"
   }
 }

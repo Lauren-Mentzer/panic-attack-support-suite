@@ -8,6 +8,7 @@ import { OpenSans_400Regular, OpenSans_600SemiBold } from '@expo-google-fonts/op
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import AppNavigator from './navigation/AppNavigator';
+import StatusBarWrapper from './components/UI/StatusBarWrapper';
 import flashcardsReducer from './store/reducers/flashcards';
 import messagesReducer from './store/reducers/messages';
 import init from './helpers/init';
@@ -55,7 +56,9 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <Provider store={store}>
-        <AppNavigator />
+        <StatusBarWrapper>
+          <AppNavigator />
+        </StatusBarWrapper>
       </Provider>
     </SafeAreaProvider>
   );

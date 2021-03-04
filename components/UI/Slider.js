@@ -1,15 +1,54 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { StyleSheet, View, FlatList, Platform, Text } from 'react-native';
+import { useSelector } from 'react-redux';
+import { View, FlatList, Platform, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import MainButton from './MainButton';
 import Card from './Card';
-import Colors from '../../constants/colors';
 
 const Slider = (props) => {
   const { dataList, cardWidth, sliderPosition, changeSliderPosition } = props;
+  const colors = useSelector((state) => state.settings.colors);
+  const colorMode = useSelector((state) => state.settings.colorPalette);
+  const [styles] = useState({
+    listContainer: {
+      backgroundColor: 'gray',
+      width: '75%',
+      minHeight: 250,
+    },
+    slider: {
+      marginVertical: 60,
+      marginHorizontal: 5,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    arrow: {
+      borderRadius: 20,
+      overflow: 'hidden',
+      width: 40,
+      height: 40,
+    },
+    card: {
+      minHeight: 250,
+      marginHorizontal: 10,
+      marginVertical: 3,
+    },
+    text: {
+      fontSize: 24,
+      fontFamily: 'OpenSans_400Regular',
+      color: colors.text,
+    },
+  });
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [disabledColor, setDisabledColor] = useState();
+  const [enabledColor, setEnabledColor] = useState();
   const sliderRef = useRef();
+
+  useEffect(() => {
+    setDisabledColor(colorMode === 'Dark' ? colors.shade3 : '#ccc');
+    setEnabledColor(colorMode === 'Dark' ? colors.accent : colors.primary);
+  }, [colors]);
 
   useEffect(() => {
     sliderRef.current.scrollToIndex({
@@ -44,7 +83,7 @@ const Slider = (props) => {
       <MainButton style={styles.arrow} onPress={goLeftHandler} disabled={currentIndex === 0}>
         <Ionicons
           size={32}
-          color={currentIndex === 0 ? '#ccc' : Colors.primary}
+          color={currentIndex === 0 ? disabledColor : enabledColor}
           name={Platform.select({ ios: 'ios-arrow-back', android: 'md-arrow-back' })}
         />
       </MainButton>
@@ -73,42 +112,12 @@ const Slider = (props) => {
       <MainButton style={styles.arrow} onPress={goRightHandler} disabled={currentIndex === dataList.length - 1}>
         <Ionicons
           size={32}
-          color={currentIndex === dataList.length - 1 ? '#ccc' : Colors.primary}
+          color={currentIndex === dataList.length - 1 ? disabledColor : enabledColor}
           name={Platform.select({ ios: 'ios-arrow-forward', android: 'md-arrow-forward' })}
         />
       </MainButton>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  listContainer: {
-    backgroundColor: 'gray',
-    width: '75%',
-    minHeight: 250,
-  },
-  slider: {
-    marginVertical: 60,
-    marginHorizontal: 5,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  arrow: {
-    borderRadius: 20,
-    overflow: 'hidden',
-    width: 40,
-    height: 40,
-  },
-  card: {
-    minHeight: 250,
-    marginHorizontal: 10,
-    marginVertical: 3,
-  },
-  text: {
-    fontSize: 24,
-    fontFamily: 'OpenSans_400Regular',
-  },
-});
 
 export default Slider;

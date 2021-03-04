@@ -1,8 +1,11 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { View, StyleSheet, Text, Animated, Switch, Platform } from 'react-native';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { useSelector } from 'react-redux';
+import { View, Text, Animated, Switch, Platform } from 'react-native';
 import { color } from 'd3-color';
 
-import Colors from '../constants/colors';
+import Toggle from '../components/UI/Toggle';
+import Shadow from '../constants/shadow';
+import MainButton from '../components/UI/MainButton';
 
 const PANIC_MODE = 0;
 const PREVENT_MODE = 1;
@@ -13,39 +16,115 @@ const IN_TIME = [4, 4];
 const HOLD_TIME = [1, 7];
 const OUT_TIME = [4, 8];
 
-const BreatheScreen = (props) => {
+const BreatheScreen = () => {
+  const colors = useSelector((state) => state.settings.colors);
+  const colorMode = useSelector((state) => state.settings.colorPalette);
+  const [styles] = useState({
+    screen: {
+      flex: 1,
+      backgroundColor: colors.light,
+    },
+    content: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    textBox: {
+      height: 80,
+      width: '100%',
+      alignItems: 'center',
+    },
+    text: {
+      fontFamily: 'OpenSans_400Regular',
+      fontSize: 16,
+      color: colors.text,
+    },
+    number: {
+      fontSize: 20,
+      marginTop: 10,
+      fontFamily: 'OpenSans_600SemiBold',
+      color: colors.text,
+    },
+    circleOutline: {
+      width: 200,
+      height: 200,
+      borderRadius: 100,
+      borderColor: colors.primary,
+      borderWidth: 2,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    circleInside: {
+      backgroundColor: colors.shade3,
+      borderRadius: 200,
+    },
+    switchBox: {
+      height: 100,
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    label: {
+      fontFamily: 'OpenSans_600SemiBold',
+      margin: 10,
+      color: colors.title,
+    },
+    button: {
+      height: 50,
+      width: '50%',
+      marginTop: 40,
+      borderRadius: 10,
+      ...Shadow,
+    },
+    buttonContainer: {
+      borderRadius: 10,
+    },
+    buttonText: {
+      color: 'white',
+      fontSize: 24,
+      fontFamily: 'Spartan_400Regular',
+    },
+  });
+
   const [displayText, setDisplayText] = useState(IN_TEXT);
   const [displayNumber, setDisplayNumber] = useState(4);
   const [mode, setMode] = useState(PANIC_MODE);
+  const [isPaused, setIsPaused] = useState(false);
   const animationValue = useRef(new Animated.Value(0)).current;
-  const fadedPrimary = color(Colors.primary);
+  const fadedPrimary = color(colors.primary);
   fadedPrimary.opacity = 0.3;
-  const fadedShade = color(Colors.shade3);
+  const fadedShade = color(colors.shade3);
   fadedShade.opacity = 0.3;
 
   useEffect(() => {
-    setTimeout(() => {
-      let newNum = displayNumber ? displayNumber - 1 : null;
-      let newText = displayText;
-      if (displayText === IN_TEXT && newNum === 0) {
-        newNum = mode === 0 ? null : HOLD_TIME[mode];
-        newText = HOLD_TEXT;
-        setDisplayText(newText);
-      } else if (displayText === OUT_TEXT && newNum === 0) {
-        newNum = IN_TIME[mode];
-        newText = IN_TEXT;
-        setDisplayText(newText);
-      } else if (displayText === HOLD_TEXT && !newNum) {
-        newNum = OUT_TIME[mode];
-        newText = OUT_TEXT;
-        setDisplayText(newText);
-      }
-      setDisplayNumber(newNum);
-    }, 1000);
-  }, [displayNumber, mode]);
+    let timeout;
+    if (!isPaused) {
+      timeout = setTimeout(() => {
+        let newNum = displayNumber ? displayNumber - 1 : null;
+        let newText = displayText;
+        if (displayText === IN_TEXT && newNum === 0) {
+          newNum = mode === 0 ? null : HOLD_TIME[mode];
+          newText = HOLD_TEXT;
+          setDisplayText(newText);
+        } else if (displayText === OUT_TEXT && newNum === 0) {
+          newNum = IN_TIME[mode];
+          newText = IN_TEXT;
+          setDisplayText(newText);
+        } else if (displayText === HOLD_TEXT && !newNum) {
+          newNum = OUT_TIME[mode];
+          newText = OUT_TEXT;
+          setDisplayText(newText);
+        }
+        setDisplayNumber(newNum);
+      }, 1000);
+    }
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [displayNumber, mode, isPaused]);
 
   useEffect(() => {
-    if (displayText === IN_TEXT) {
+    if (displayText === IN_TEXT && !isPaused) {
       Animated.sequence([
         Animated.timing(animationValue, {
           toValue: 200,
@@ -62,10 +141,62 @@ const BreatheScreen = (props) => {
     }
   }, [displayText, mode]);
 
-  const toggleMode = () => {
+  const toggleMode = useCallback(() => {
     const newMode = mode === PANIC_MODE ? PREVENT_MODE : PANIC_MODE;
     setMode(newMode);
-  };
+    setDisplayText(IN_TEXT);
+    setDisplayNumber(IN_TIME[newMode]);
+    animationValue.setValue(0);
+  }, [mode]);
+
+  const togglePause = useCallback(() => {
+    if (isPaused) {
+      let inTime;
+      let holdTime;
+      let outTime;
+      switch (displayText) {
+        case IN_TEXT:
+          inTime = displayNumber;
+          holdTime = HOLD_TIME[mode];
+          outTime = OUT_TIME[mode];
+          break;
+        case HOLD_TEXT:
+          inTime = 0;
+          holdTime = displayNumber || 1;
+          outTime = OUT_TIME[mode];
+          break;
+        case OUT_TEXT:
+          inTime = 0;
+          holdTime = 0;
+          outTime = displayNumber;
+          break;
+        default:
+      }
+      const animationArray = [];
+      if (inTime) {
+        animationArray.push(
+          Animated.timing(animationValue, {
+            toValue: 200,
+            duration: inTime * 1000,
+            useNativeDriver: false,
+          }),
+        );
+      }
+      animationArray.push(
+        Animated.timing(animationValue, {
+          toValue: 0,
+          duration: outTime * 1000,
+          delay: holdTime * 1000,
+          useNativeDriver: false,
+        }),
+      );
+      Animated.sequence(animationArray).start();
+      setIsPaused(false);
+    } else {
+      Animated.timing(animationValue).stop();
+      setIsPaused(true);
+    }
+  }, [isPaused, mode]);
 
   return (
     <View style={styles.screen}>
@@ -82,78 +213,31 @@ const BreatheScreen = (props) => {
               width: animationValue,
               backgroundColor: animationValue.interpolate({
                 inputRange: [0, 200],
-                outputRange: [Colors.shade3, Colors.primary],
+                outputRange: [
+                  colorMode === 'Dark' ? colors.shade1 : colors.shade3,
+                  colorMode === 'Dark' ? colors.shade3 : colors.primary,
+                ],
               }),
             }}
           />
         </View>
+        <MainButton
+          color={colors.shade2}
+          onPress={togglePause}
+          style={styles.button}
+          containerStyle={styles.buttonContainer}
+        >
+          <Text style={styles.buttonText}>{isPaused ? 'Resume' : 'Pause'}</Text>
+        </MainButton>
       </View>
 
       <View style={styles.switchBox}>
         <Text style={styles.label}>Panic Mode</Text>
-        <Switch
-          value={!!mode}
-          onValueChange={toggleMode}
-          ios_backgroundColor={Colors.primary}
-          trackColor={{
-            false: Platform.OS === 'android' ? fadedPrimary : Colors.primary,
-            true: Platform.OS === 'android' ? fadedShade : Colors.shade3,
-          }}
-          thumbColor={Platform.OS === 'android' ? (mode === 0 ? Colors.primary : Colors.shade3) : undefined}
-        />
+        <Toggle toggleValue={!!mode} toggleHandler={toggleMode} />
         <Text style={styles.label}>Preventative Mode</Text>
       </View>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    backgroundColor: Colors.light,
-  },
-  content: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  textBox: {
-    height: 80,
-    width: '100%',
-    alignItems: 'center',
-  },
-  text: {
-    fontFamily: 'OpenSans_400Regular',
-    fontSize: 16,
-  },
-  number: {
-    fontSize: 20,
-    marginTop: 10,
-    fontFamily: 'OpenSans_600SemiBold',
-  },
-  circleOutline: {
-    width: 200,
-    height: 200,
-    borderRadius: 100,
-    borderColor: Colors.primary,
-    borderWidth: 2,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  circleInside: {
-    backgroundColor: Colors.shade3,
-    borderRadius: 200,
-  },
-  switchBox: {
-    height: 100,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  label: {
-    fontFamily: 'OpenSans_600SemiBold',
-    margin: 10,
-  },
-});
 
 export default BreatheScreen;
