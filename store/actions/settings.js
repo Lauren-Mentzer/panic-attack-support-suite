@@ -9,9 +9,9 @@ import {
   COMMUNICATE_ENABLED,
   CONTACT_ENABLED,
 } from '../../constants/keys';
-import { Default, Green, Dusk, Greyscale, Dark } from '../../constants/colors';
+import { Seafoam, Forest, Dusk, Desert, Monochrome, Dark } from '../../constants/colors';
 
-export const COLOR_PALETTES = ['Default', 'Green', 'Dusk', 'Greyscale', 'Dark'];
+export const COLOR_PALETTES = ['Seafoam', 'Forest', 'Dusk', 'Desert', 'Monochrome', 'Dark'];
 
 export const SET_COLORS = 'SET_COLORS';
 export const SET_COLOR_PALETTE = 'SET_COLOR_PALETTE';
@@ -25,22 +25,25 @@ export const setColorPalette = (palette) => {
     let colors;
     switch (palette) {
       case COLOR_PALETTES[0]:
-        colors = Default;
+        colors = Seafoam;
         break;
       case COLOR_PALETTES[1]:
-        colors = Green;
+        colors = Forest;
         break;
       case COLOR_PALETTES[2]:
         colors = Dusk;
         break;
       case COLOR_PALETTES[3]:
-        colors = Greyscale;
+        colors = Desert;
         break;
       case COLOR_PALETTES[4]:
+        colors = Monochrome;
+        break;
+      case COLOR_PALETTES[5]:
         colors = Dark;
         break;
       default:
-        colors = Default;
+        colors = Seafoam;
         break;
     }
     dispatch(setColors(colors));

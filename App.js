@@ -6,6 +6,7 @@ import { Provider } from 'react-redux';
 import { useFonts, Spartan_400Regular } from '@expo-google-fonts/spartan';
 import { OpenSans_400Regular, OpenSans_600SemiBold } from '@expo-google-fonts/open-sans';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { deactivateKeepAwake } from 'expo-keep-awake';
 
 import AppNavigator from './navigation/AppNavigator';
 import StatusBarWrapper from './components/UI/StatusBarWrapper';
@@ -43,9 +44,11 @@ export default function App() {
     if (timeElapsed < 3000) {
       setTimeout(() => {
         setIsReady(true);
+        deactivateKeepAwake();
       }, 3000 - timeElapsed);
     } else {
       setIsReady(true);
+      deactivateKeepAwake();
     }
   };
 

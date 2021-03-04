@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import { View, Text, Animated, Switch, Platform } from 'react-native';
+import { View, Text, Animated } from 'react-native';
 import { color } from 'd3-color';
+import { deactivateKeepAwake, activateKeepAwake } from 'expo-keep-awake';
 
 import Toggle from '../components/UI/Toggle';
 import Shadow from '../constants/shadow';
@@ -16,7 +17,8 @@ const IN_TIME = [4, 4];
 const HOLD_TIME = [1, 7];
 const OUT_TIME = [4, 8];
 
-const BreatheScreen = () => {
+const BreatheScreen = (props) => {
+  const { navigation } = props;
   const colors = useSelector((state) => state.settings.colors);
   const colorMode = useSelector((state) => state.settings.colorPalette);
   const [styles] = useState({
@@ -95,6 +97,19 @@ const BreatheScreen = () => {
   fadedPrimary.opacity = 0.3;
   const fadedShade = color(colors.shade3);
   fadedShade.opacity = 0.3;
+
+  useEffect(() => {
+    const leaveListener = (e) => {
+      e.preventDefault();
+      deactivateKeepAwake('breathe');
+      navigation.dispatch(e.data.action);
+    };
+    navigation.addListener('beforeRemove', leaveListener);
+    activateKeepAwake('breathe');
+    return () => {
+      navigation.removeListener('beforeRemove', leaveListener);
+    };
+  }, [navigation]);
 
   useEffect(() => {
     let timeout;

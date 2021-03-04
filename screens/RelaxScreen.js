@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { View, Text } from 'react-native';
+import { activateKeepAwake, deactivateKeepAwake } from 'expo-keep-awake';
 
 import Shadow from '../constants/shadow';
 import MainButton from '../components/UI/MainButton';
@@ -21,6 +22,7 @@ const RELAX_PROMPTS = [
 ];
 
 const RelaxScreen = (props) => {
+  const { navigation } = props;
   const colors = useSelector((state) => state.settings.colors);
   const [styles] = useState({
     screen: {
@@ -69,6 +71,9 @@ const RelaxScreen = (props) => {
 
   useEffect(() => {
     let timeout;
+    if (phaseNum === 10) {
+      deactivateKeepAwake('relax');
+    }
     if (phaseNum && phaseNum !== 10 && !isPaused) {
       timeout = setTimeout(() => {
         if (seconds === 1 && isRelax) {
@@ -95,11 +100,24 @@ const RelaxScreen = (props) => {
   const onStart = () => {
     setSeconds(10);
     setPhaseNum(1);
+    activateKeepAwake('relax');
   };
 
   const togglePause = () => {
     setIsPaused((value) => !value);
   };
+
+  useEffect(() => {
+    const leaveListener = (e) => {
+      e.preventDefault();
+      deactivateKeepAwake('relax');
+      navigation.dispatch(e.data.action);
+    };
+    navigation.addListener('beforeRemove', leaveListener);
+    return () => {
+      navigation.removeListener('beforeRemove', leaveListener);
+    };
+  }, [navigation]);
 
   return (
     <View style={styles.screen}>
@@ -132,7 +150,7 @@ const RelaxScreen = (props) => {
           color={colors.shade2}
           style={styles.button}
           containerStyle={styles.buttonContainer}
-          onPress={() => props.navigation.navigate('Home')}
+          onPress={() => navigation.navigate('Home')}
         >
           <Text style={styles.buttonText}>Finish</Text>
         </MainButton>

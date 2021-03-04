@@ -2,12 +2,14 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { View, SafeAreaView, ScrollView, KeyboardAvoidingView, TextInput, Platform, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { deactivateKeepAwake, activateKeepAwake } from 'expo-keep-awake';
 
 import Card from '../components/UI/Card';
 import MainButton from '../components/UI/MainButton';
 import { saveMessage } from '../store/actions/messages';
 
-const ChatScreen = () => {
+const ChatScreen = (props) => {
+  const { navigation } = props;
   const dispatch = useDispatch();
   const colors = useSelector((state) => state.settings.colors);
   const colorMode = useSelector((state) => state.settings.colorPalette);
@@ -61,6 +63,19 @@ const ChatScreen = () => {
   const messageList = useSelector((state) => state.messages.list);
   const [textMessage, setTextMessage] = useState('');
   const scrollRef = useRef();
+
+  useEffect(() => {
+    const leaveListener = (e) => {
+      e.preventDefault();
+      deactivateKeepAwake('chat');
+      navigation.dispatch(e.data.action);
+    };
+    navigation.addListener('beforeRemove', leaveListener);
+    activateKeepAwake('chat');
+    return () => {
+      navigation.removeListener('beforeRemove', leaveListener);
+    };
+  }, [navigation]);
 
   useEffect(() => {
     if (!scrollRef || !scrollRef.current) return;

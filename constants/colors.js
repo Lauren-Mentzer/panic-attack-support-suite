@@ -1,4 +1,4 @@
-export const Default = {
+export const Seafoam = {
   primary: '#05668d',
   shade1: '#028090',
   shade2: '#00a896',
@@ -9,7 +9,7 @@ export const Default = {
   title: '#777',
 };
 
-export const Green = {
+export const Forest = {
   primary: '#2b4f33',
   shade1: '#386641',
   shade2: '#6a994e',
@@ -31,7 +31,18 @@ export const Dusk = {
   title: '#777',
 };
 
-export const Greyscale = {
+export const Desert = {
+  primary: '#7b6c6b',
+  shade1: '#9f9291',
+  shade2: '#AFA099',
+  shade3: '#BFB19F',
+  light: '#edeae5',
+  danger: '#a1655e',
+  text: '#000000',
+  title: '#777',
+};
+
+export const Monochrome = {
   primary: '#38322E',
   shade1: '#463f3a',
   shade2: '#8a817c',

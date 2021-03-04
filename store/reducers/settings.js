@@ -10,7 +10,7 @@ const initialState = {
     light: '#fbfcee',
     danger: '#b92e34',
   },
-  colorPalette: 'Default',
+  colorPalette: 'Seafoam',
   enabled: {
     breathe: true,
     grounding: true,

@@ -1,13 +1,15 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { View, Dimensions, Platform } from 'react-native';
 import { Slider } from 'react-native-elements';
 import { color } from 'd3-color';
+import { deactivateKeepAwake, activateKeepAwake } from 'expo-keep-awake';
 
 import Shadow from '../constants/shadow';
 import FlashcardSlider from '../components/UI/Slider';
 
-const FlaschardScreen = () => {
+const FlaschardScreen = (props) => {
+  const { navigation } = props;
   const colors = useSelector((state) => state.settings.colors);
   const colorMode = useSelector((state) => state.settings.colorPalette);
   const [styles] = useState({
@@ -45,6 +47,19 @@ const FlaschardScreen = () => {
   const flashcardList = useSelector((state) => state.flashcards.list);
   const fadedColor = color(colorMode === 'Dark' ? colors.accent : colors.shade2);
   fadedColor.opacity = 0.3;
+
+  useEffect(() => {
+    const leaveListener = (e) => {
+      e.preventDefault();
+      deactivateKeepAwake('flashcards');
+      navigation.dispatch(e.data.action);
+    };
+    navigation.addListener('beforeRemove', leaveListener);
+    activateKeepAwake('flashcards');
+    return () => {
+      navigation.removeListener('beforeRemove', leaveListener);
+    };
+  }, [navigation]);
 
   const changeSliderPosition = useCallback(
     (newPosition) => {
