@@ -1,17 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
-import { Platform, Text } from 'react-native';
+import { Platform } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 
-import { Ionicons } from '@expo/vector-icons';
 import HomeScreen from '../screens/HomeScreen';
 import BreatheScreen from '../screens/BreatheScreen';
-import FlaschardScreen from '../screens/FlashcardScreen';
-import ChatScreen from '../screens/ChatScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import ReminderSettingsScreen from '../screens/settings/ReminderSettingsScreen';
 import CommunicateSettingsScreen from '../screens/settings/CommunicateSettingsScreen';
@@ -23,79 +18,33 @@ import RelaxScreen from '../screens/RelaxScreen';
 import RemindersScreen from '../screens/RemindersScreen';
 import InfoSettingsScreen from '../screens/settings/InfoSettingsScreen';
 import ContactScreen from '../screens/ContactScreen';
+import TalkTabs from './TalkTabs';
 
 const MainStack = createStackNavigator();
-const Tab = Platform.OS === 'android' ? createMaterialBottomTabNavigator() : createBottomTabNavigator();
 
-const AppNavigator = (props) => {
+const AppNavigator = () => {
   const colors = useSelector((state) => state.settings.colors);
-
-  const TalkTabs = () => {
-    return (
-      <Tab.Navigator
-        tabBarOptions={({ route }) => {
-          return {
-            tabBarIcon: ({ focused, color }) => {
-              let iconName;
-              if (route.name === 'Chat') {
-                if (Platform.OS === 'ios') {
-                  iconName = focused ? 'ios-chatbox-ellipses' : 'ios-chatbox-ellipses-outline';
-                } else {
-                  iconName = focused ? 'md-chatbox-ellipses' : 'md-chatbox-ellipses-outline';
-                }
-              } else if (route.name === 'Flashcards') {
-                if (Platform.OS === 'ios') {
-                  iconName = focused ? 'ios-file-tray-full' : 'ios-file-tray-full-outline';
-                } else {
-                  iconName = focused ? 'md-file-tray-full' : 'md-file-tray-full-outline';
-                }
-              }
-              return <Ionicons name={iconName} color={color} size={25} />;
-            },
-            tabBarLabel:
-              Platform.OS === 'ios' ? (
-                route.name
-              ) : (
-                <Text style={{ fontSize: 12, fontFamily: 'OpenSans_400Regular' }}>{route.name}</Text>
-              ),
-          };
-        }}
-        screenOptions={{
-          activeTintColor: colors.shade2,
-          labelStyle: {
-            fontFamily: 'OpenSans_400Regular',
-            fontSize: 12,
-          },
-          tabStyle: {
-            borderTopColor: '#ccc',
-            borderTopWidth: Platform.OS === 'ios' ? 1 : 0,
-            paddingTop: Platform.OS === 'ios' ? 5 : 0,
-          },
-        }}
-        initialRouteName="Flashcards"
-        activeColor={colors.shade3}
-        shifting
-        barStyle={{ backgroundColor: colors.primary }}
-      >
-        <Tab.Screen name="Flashcards" component={FlaschardScreen} />
-        <Tab.Screen name="Chat" component={ChatScreen} />
-      </Tab.Navigator>
-    );
-  };
+  const colorMode = useSelector((state) => state.settings.colorPalette);
 
   return (
     <NavigationContainer>
       <MainStack.Navigator
         screenOptions={{
           headerStyle: {
-            backgroundColor: Platform.OS === 'android' ? colors.primary : 'white',
+            backgroundColor: Platform.select({
+              ios: colorMode === 'Dark' ? colors.primary : 'white',
+              android: colors.primary,
+            }),
             borderBottomWidth: Platform.OS === 'ios' ? 1 : 0,
-            borderBottomColor: '#ccc',
+            borderBottomColor: colorMode === 'Dark' ? colors.shade2 : '#ccc',
           },
           headerTitleStyle: {
             fontFamily: 'OpenSans_600SemiBold',
           },
-          headerTintColor: Platform.OS === 'android' ? 'white' : colors.primary,
+          headerTintColor: Platform.select({
+            android: 'white',
+            ios: colorMode === 'Dark' ? colors.text : colors.primary,
+          }),
           headerBackTitleStyle: {
             fontFamily: 'OpenSans_400Regular',
           },
@@ -111,6 +60,12 @@ const AppNavigator = (props) => {
                   <Item
                     title="Settings"
                     iconName="settings-sharp"
+                    buttonStyle={{
+                      color: Platform.select({
+                        ios: colorMode === 'Dark' ? 'white' : colors.primary,
+                        android: 'white',
+                      }),
+                    }}
                     onPress={() => navigation.navigate('App Settings')}
                   />
                 </HeaderButtons>
@@ -118,9 +73,15 @@ const AppNavigator = (props) => {
               headerLeft: () => (
                 <HeaderButtons HeaderButtonComponent={HeaderButton}>
                   <Item
-                    title="Menu"
+                    title="Emergency"
                     iconName={Platform.OS === 'ios' ? 'medical-sharp' : 'medical'}
                     onPress={() => navigation.navigate('Emergency Information')}
+                    buttonStyle={{
+                      color: Platform.select({
+                        ios: colorMode === 'Dark' ? 'white' : colors.primary,
+                        android: 'white',
+                      }),
+                    }}
                   />
                 </HeaderButtons>
               ),
@@ -141,6 +102,12 @@ const AppNavigator = (props) => {
                     title="Settings"
                     iconName="settings-sharp"
                     onPress={() => navigation.navigate('Communicate Settings')}
+                    buttonStyle={{
+                      color: Platform.select({
+                        ios: colorMode === 'Dark' ? 'white' : colors.primary,
+                        android: 'white',
+                      }),
+                    }}
                   />
                 </HeaderButtons>
               ),
@@ -158,6 +125,12 @@ const AppNavigator = (props) => {
                     title="Settings"
                     iconName="settings-sharp"
                     onPress={() => navigation.navigate('Reminders Settings')}
+                    buttonStyle={{
+                      color: Platform.select({
+                        ios: colorMode === 'Dark' ? 'white' : colors.primary,
+                        android: 'white',
+                      }),
+                    }}
                   />
                 </HeaderButtons>
               ),
@@ -175,6 +148,12 @@ const AppNavigator = (props) => {
                     title="Settings"
                     iconName="settings-sharp"
                     onPress={() => navigation.navigate('Contact Settings')}
+                    buttonStyle={{
+                      color: Platform.select({
+                        ios: colorMode === 'Dark' ? 'white' : colors.primary,
+                        android: 'white',
+                      }),
+                    }}
                   />
                 </HeaderButtons>
               ),
@@ -192,6 +171,12 @@ const AppNavigator = (props) => {
                     title="Settings"
                     iconName="settings-sharp"
                     onPress={() => navigation.navigate('Emergency Info Settings')}
+                    buttonStyle={{
+                      color: Platform.select({
+                        ios: colorMode === 'Dark' ? 'white' : colors.primary,
+                        android: 'white',
+                      }),
+                    }}
                   />
                 </HeaderButtons>
               ),

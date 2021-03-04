@@ -7,54 +7,60 @@ import Card from '../components/UI/Card';
 import MainButton from '../components/UI/MainButton';
 import { saveMessage } from '../store/actions/messages';
 
-const ChatScreen = (props) => {
+const ChatScreen = () => {
   const dispatch = useDispatch();
-  const [styles, setStyles] = useState({});
   const colors = useSelector((state) => state.settings.colors);
+  const colorMode = useSelector((state) => state.settings.colorPalette);
+  const [styles] = useState({
+    screen: {
+      flex: 1,
+      justifyContent: 'space-between',
+      backgroundColor: colors.light,
+    },
+    messageCard: {
+      marginVertical: 10,
+      marginHorizontal: 5,
+      padding: 10,
+    },
+    messagesContainer: {
+      height: '100%',
+      justifyContent: 'space-between',
+      marginHorizontal: 20,
+    },
+    scroll: {
+      flex: 1,
+      justifyContent: 'flex-end',
+    },
+    message: {
+      fontSize: 16,
+      fontFamily: 'OpenSans_400Regular',
+      color: colors.text,
+    },
+    inputWrapper: {
+      marginVertical: 10,
+      flexDirection: 'row',
+      alignItems: 'flex-end',
+      justifyContent: 'space-between',
+      padding: 12,
+      borderColor: colors.shade2,
+      borderWidth: colorMode === 'Dark' ? 1 : 0,
+    },
+    input: {
+      width: '80%',
+      fontFamily: 'OpenSans_400Regular',
+      color: colors.text,
+    },
+    submitButton: {
+      borderRadius: 12,
+      overflow: 'hidden',
+      height: 24,
+      width: 24,
+    },
+  });
+
   const messageList = useSelector((state) => state.messages.list);
   const [textMessage, setTextMessage] = useState('');
   const scrollRef = useRef();
-
-  useEffect(() => {
-    setStyles({
-      screen: {
-        flex: 1,
-        justifyContent: 'space-between',
-        backgroundColor: colors.light,
-      },
-      messageCard: {
-        marginVertical: 10,
-        marginHorizontal: 5,
-        padding: 10,
-      },
-      messagesContainer: {
-        height: '100%',
-        justifyContent: 'space-between',
-        marginHorizontal: 20,
-      },
-      message: {
-        fontSize: 16,
-        fontFamily: 'OpenSans_400Regular',
-      },
-      inputWrapper: {
-        marginVertical: 10,
-        flexDirection: 'row',
-        alignItems: 'flex-end',
-        justifyContent: 'space-between',
-        padding: 12,
-      },
-      input: {
-        width: '80%',
-        fontFamily: 'OpenSans_400Regular',
-      },
-      submitButton: {
-        borderRadius: 12,
-        overflow: 'hidden',
-        height: 24,
-        width: 24,
-      },
-    });
-  }, []);
 
   useEffect(() => {
     if (!scrollRef || !scrollRef.current) return;
@@ -71,7 +77,11 @@ const ChatScreen = (props) => {
   return (
     <View style={styles.screen}>
       <SafeAreaView style={styles.messagesContainer}>
-        <ScrollView ref={scrollRef} onContentSizeChange={() => scrollRef.current.scrollToEnd({ animated: true })}>
+        <ScrollView
+          contentContainerStyle={styles.scroll}
+          ref={scrollRef}
+          onContentSizeChange={() => scrollRef.current.scrollToEnd({ animated: true })}
+        >
           {messageList.map((message, index) => (
             // eslint-disable-next-line react/no-array-index-key
             <Card key={index} style={styles.messageCard}>
@@ -89,11 +99,12 @@ const ChatScreen = (props) => {
               returnKeyType="done"
               value={textMessage}
               onChangeText={(newText) => setTextMessage(newText)}
+              placeholderTextColor={colors.text}
             />
             <MainButton style={styles.submitButton} onPress={submitMessageHandler}>
               <Ionicons
                 size={22}
-                color={colors.primary}
+                color={colorMode === 'Dark' ? colors.accent : colors.primary}
                 name={Platform.select({ ios: 'ios-send', android: 'md-send' })}
               />
             </MainButton>

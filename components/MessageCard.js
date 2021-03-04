@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { KeyboardAvoidingView, TextInput, View, Button, Text, Platform } from 'react-native';
+import { KeyboardAvoidingView, TextInput, View, Text, Platform } from 'react-native';
 
 import Card from './UI/Card';
 import CardModal from './UI/CardModal';
@@ -8,65 +8,67 @@ import MainButton from './UI/MainButton';
 
 const MessageCard = (props) => {
   const { index, message, editHandler, deleteHandler } = props;
-  const [styles, setStyles] = useState({});
   const colors = useSelector((state) => state.settings.colors);
+  const colorMode = useSelector((state) => state.settings.colorPalette);
+  const [styles] = useState({
+    card: {
+      marginVertical: 10,
+      marginHorizontal: 5,
+    },
+    message: {
+      fontSize: 16,
+      marginBottom: 10,
+      fontFamily: 'OpenSans_400Regular',
+      color: colorMode === 'Dark' ? colors.text : 'black',
+    },
+    input: {
+      borderColor: colorMode === 'Dark' ? colors.shade3 : '#ccc',
+      backgroundColor: colorMode === 'Dark' ? colors.shade1 : undefined,
+      borderWidth: 1,
+      padding: 15,
+      paddingTop: 15,
+      width: '100%',
+      marginBottom: 10,
+      color: colors.text,
+    },
+    buttonRow: {
+      flexDirection: 'row',
+      justifyContent: 'flex-end',
+    },
+    modalText: {
+      textAlign: 'center',
+      fontSize: 16,
+      marginBottom: 10,
+      fontFamily: 'OpenSans_400Regular',
+      color: colors.text,
+    },
+    modalButtonRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+    },
+    modalButton: {
+      minWidth: 100,
+    },
+    button: {
+      marginLeft: 10,
+      width: 80,
+      height: 35,
+      borderRadius: 5,
+    },
+    buttonText: {
+      fontFamily: 'Spartan_400Regular',
+      color: 'white',
+      fontSize: 14,
+    },
+    buttonContainer: {
+      borderRadius: 5,
+    },
+  });
+
   const dispatch = useDispatch();
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [inputText, setInputText] = useState('');
-
-  useEffect(() => {
-    setStyles({
-      card: {
-        marginVertical: 10,
-        marginHorizontal: 5,
-      },
-      message: {
-        fontSize: 16,
-        marginBottom: 10,
-        fontFamily: 'OpenSans_400Regular',
-      },
-      input: {
-        borderColor: '#ccc',
-        borderWidth: 1,
-        padding: 15,
-        paddingTop: 15,
-        width: '100%',
-        marginBottom: 10,
-      },
-      buttonRow: {
-        flexDirection: 'row',
-        justifyContent: 'flex-end',
-      },
-      modalText: {
-        textAlign: 'center',
-        fontSize: 16,
-        marginBottom: 10,
-        fontFamily: 'OpenSans_400Regular',
-      },
-      modalButtonRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-      },
-      modalButton: {
-        minWidth: 100,
-      },
-      button: {
-        marginLeft: 10,
-        width: 80,
-        height: 35,
-        borderRadius: 5,
-      },
-      buttonText: {
-        fontFamily: 'Spartan_400Regular',
-        color: 'white',
-        fontSize: 14,
-      },
-      buttonContainer: {
-        borderRadius: 5,
-      },
-    });
-  }, []);
 
   const deleteCardHandler = () => {
     dispatch(deleteHandler(index));
@@ -115,7 +117,7 @@ const MessageCard = (props) => {
             <MainButton
               style={styles.button}
               containerStyle={styles.buttonContainer}
-              color={colors.shade3}
+              color={colors.shade2}
               onPress={editCardHandler}
             >
               <Text style={styles.buttonText}>Save</Text>
@@ -137,7 +139,7 @@ const MessageCard = (props) => {
             <MainButton
               style={styles.button}
               containerStyle={styles.buttonContainer}
-              color={colors.shade3}
+              color={colors.shade2}
               onPress={() => startEditCardHandler(index)}
             >
               <Text style={styles.buttonText}>Edit</Text>

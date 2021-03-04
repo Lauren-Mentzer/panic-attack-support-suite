@@ -21,55 +21,56 @@ const RELAX_PROMPTS = [
 ];
 
 const RelaxScreen = (props) => {
-  const [styles, setStyles] = useState({});
   const colors = useSelector((state) => state.settings.colors);
+  const [styles] = useState({
+    screen: {
+      flex: 1,
+      backgroundColor: colors.light,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    promptBox: {
+      width: '75%',
+      minHeight: 50,
+    },
+    prompt: {
+      fontFamily: 'OpenSans_400Regular',
+      fontSize: 18,
+      textAlign: 'center',
+      color: colors.text,
+    },
+    seconds: {
+      fontFamily: 'OpenSans_600SemiBold',
+      fontSize: 32,
+      marginTop: 20,
+      color: colors.text,
+    },
+    button: {
+      height: 50,
+      width: '50%',
+      marginTop: 40,
+      borderRadius: 10,
+      ...Shadow,
+    },
+    buttonContainer: {
+      borderRadius: 10,
+    },
+    buttonText: {
+      color: 'white',
+      fontSize: 24,
+      fontFamily: 'Spartan_400Regular',
+    },
+  });
+
   const [phaseNum, setPhaseNum] = useState(0);
   const [seconds, setSeconds] = useState(0);
   const [isRelax, setIsRelax] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
-    setStyles({
-      screen: {
-        flex: 1,
-        backgroundColor: colors.light,
-        justifyContent: 'center',
-        alignItems: 'center',
-      },
-      promptBox: {
-        width: '75%',
-        minHeight: 50,
-      },
-      prompt: {
-        fontFamily: 'OpenSans_400Regular',
-        fontSize: 18,
-        textAlign: 'center',
-      },
-      seconds: {
-        fontFamily: 'OpenSans_600SemiBold',
-        fontSize: 32,
-        marginTop: 20,
-      },
-      button: {
-        height: 50,
-        width: '50%',
-        marginTop: 40,
-        borderRadius: 10,
-        ...Shadow,
-      },
-      buttonContainer: {
-        borderRadius: 10,
-      },
-      buttonText: {
-        color: 'white',
-        fontSize: 24,
-        fontFamily: 'Spartan_400Regular',
-      },
-    });
-  }, []);
-
-  useEffect(() => {
-    if (phaseNum && phaseNum !== 10) {
-      setTimeout(() => {
+    let timeout;
+    if (phaseNum && phaseNum !== 10 && !isPaused) {
+      timeout = setTimeout(() => {
         if (seconds === 1 && isRelax) {
           setPhaseNum(phaseNum + 1);
           setIsRelax(false);
@@ -86,11 +87,18 @@ const RelaxScreen = (props) => {
         }
       }, 1000);
     }
-  }, [seconds]);
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [seconds, isPaused]);
 
   const onStart = () => {
     setSeconds(10);
     setPhaseNum(1);
+  };
+
+  const togglePause = () => {
+    setIsPaused((value) => !value);
   };
 
   return (
@@ -107,6 +115,16 @@ const RelaxScreen = (props) => {
           onPress={onStart}
         >
           <Text style={styles.buttonText}>Start</Text>
+        </MainButton>
+      )}
+      {phaseNum > 0 && phaseNum < 10 && (
+        <MainButton
+          color={colors.shade2}
+          style={styles.button}
+          containerStyle={styles.buttonContainer}
+          onPress={togglePause}
+        >
+          <Text style={styles.buttonText}>{isPaused ? 'Resume' : 'Pause'}</Text>
         </MainButton>
       )}
       {phaseNum === 10 && (

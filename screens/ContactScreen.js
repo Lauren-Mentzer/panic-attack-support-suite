@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-one-expression-per-line */
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { View, Text } from 'react-native';
 import * as Linking from 'expo-linking';
@@ -8,49 +8,48 @@ import * as SMS from 'expo-sms';
 import Shadow from '../constants/shadow';
 import MainButton from '../components/UI/MainButton';
 
-const ContactScreen = (props) => {
-  const [styles, setStyles] = useState({});
+const ContactScreen = () => {
   const colors = useSelector((state) => state.settings.colors);
+  const colorMode = useSelector((state) => state.settings.colorPalette);
+  const [styles] = useState({
+    screen: {
+      flex: 1,
+      backgroundColor: colors.light,
+      paddingVertical: 10,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    button: {
+      height: '15%',
+      width: '80%',
+      marginVertical: 10,
+      borderRadius: 10,
+      ...Shadow,
+    },
+    buttonContainer: {
+      borderRadius: 10,
+    },
+    title: {
+      color: 'white',
+      fontSize: 24,
+      fontFamily: 'Spartan_400Regular',
+    },
+    default: {
+      width: '50%',
+    },
+    defaultMessage: {
+      fontFamily: 'OpenSans_400Regular',
+      fontSize: 15,
+      textAlign: 'center',
+      color: colors.text,
+    },
+  });
+
   const contact1 = useSelector((state) => state.contact.contact1);
   const contact2 = useSelector((state) => state.contact.contact2);
 
-  useEffect(() => {
-    setStyles({
-      screen: {
-        flex: 1,
-        backgroundColor: colors.light,
-        paddingVertical: 10,
-        alignItems: 'center',
-        justifyContent: 'center',
-      },
-      button: {
-        height: '15%',
-        width: '80%',
-        marginVertical: 10,
-        borderRadius: 10,
-        ...Shadow,
-      },
-      buttonContainer: {
-        borderRadius: 10,
-      },
-      title: {
-        color: 'white',
-        fontSize: 24,
-        fontFamily: 'Spartan_400Regular',
-      },
-      default: {
-        width: '50%',
-      },
-      defaultMessage: {
-        fontFamily: 'OpenSans_400Regular',
-        fontSize: 15,
-        textAlign: 'center',
-      },
-    });
-  }, []);
-
   const textHandler = async (number, message) => {
-    const { result } = await SMS.sendSMSAsync(number, message);
+    SMS.sendSMSAsync(number, message);
   };
 
   const callHandler = (number) => {

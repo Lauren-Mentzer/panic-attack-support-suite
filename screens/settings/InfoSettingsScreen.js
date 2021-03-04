@@ -11,8 +11,40 @@ import HelpButton from '../../components/HelpButton';
 const InfoSettingsScreen = (props) => {
   const dispatch = useDispatch();
   const { navigation } = props;
-  const [styles, setStyles] = useState({});
   const colors = useSelector((state) => state.settings.colors);
+  const colorMode = useSelector((state) => state.settings.colorPalette);
+  const [styles] = useState({
+    screen: {
+      flex: 1,
+      backgroundColor: colors.light,
+      paddingVertical: 10,
+      paddingHorizontal: 20,
+    },
+    contents: {
+      paddingBottom: 20,
+    },
+    inputWrapper: {
+      marginVertical: 10,
+    },
+    headerLabel: {
+      fontFamily: 'OpenSans_600SemiBold',
+      fontSize: 16,
+      color: colors.title,
+    },
+    headerRow: {
+      flexDirection: 'row',
+      width: '100%',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginTop: 10,
+    },
+    description: {
+      marginBottom: 10,
+      fontFamily: 'OpenSans_400Regular',
+      color: colors.text,
+    },
+  });
+
   const storeName = useSelector((state) => state.medInfo.name);
   const storeBirthday = useSelector((state) => state.medInfo.birthday);
   const storeAddress = useSelector((state) => state.medInfo.address);
@@ -26,39 +58,6 @@ const InfoSettingsScreen = (props) => {
   const [medNotes, setMedNotes] = useState(storeMedNotes);
   const [allergies, setAllergies] = useState(storeAllergies);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-
-  useEffect(() => {
-    setStyles({
-      screen: {
-        flex: 1,
-        backgroundColor: colors.light,
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-      },
-      contents: {
-        paddingBottom: 20,
-      },
-      inputWrapper: {
-        marginVertical: 10,
-      },
-      headerLabel: {
-        fontFamily: 'OpenSans_600SemiBold',
-        fontSize: 16,
-        color: '#777',
-      },
-      headerRow: {
-        flexDirection: 'row',
-        width: '100%',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        marginTop: 10,
-      },
-      description: {
-        marginBottom: 10,
-        fontFamily: 'OpenSans_400Regular',
-      },
-    });
-  }, []);
 
   const save = useCallback(() => {
     const newName = name && name.trim().length ? name.trim() : null;
@@ -74,7 +73,17 @@ const InfoSettingsScreen = (props) => {
     props.navigation.setOptions({
       headerRight: () => (
         <HeaderButtons HeaderButtonComponent={HeaderButton}>
-          <Item title="Settings" iconName={Platform.OS === 'ios' ? 'save-sharp' : 'save'} onPress={save} />
+          <Item
+            title="Settings"
+            iconName={Platform.OS === 'ios' ? 'save-sharp' : 'save'}
+            onPress={save}
+            buttonStyle={{
+              color: Platform.select({
+                ios: colorMode === 'Dark' ? 'white' : colors.primary,
+                android: 'white',
+              }),
+            }}
+          />
         </HeaderButtons>
       ),
     });

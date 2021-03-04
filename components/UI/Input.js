@@ -31,40 +31,39 @@ const Input = (props) => {
     maxLength,
     onInputChange,
   } = props;
-  const [styles, setStyles] = useState({});
   const colors = useSelector((state) => state.settings.colors);
+  const [styles] = useState({
+    formControl: {
+      width: '100%',
+    },
+    label: {
+      marginVertical: 8,
+      fontFamily: 'OpenSans_600SemiBold',
+      color: colors.text,
+    },
+    input: {
+      paddingHorizontal: 2,
+      paddingVertical: 5,
+      borderBottomColor: '#ccc',
+      borderBottomWidth: 1,
+      fontFamily: 'OpenSans_400Regular',
+      color: colors.text,
+    },
+    errorContainer: {
+      marginVertical: 5,
+    },
+    error: {
+      color: colors.danger,
+      fontSize: 13,
+      fontFamily: 'OpenSans_400Regular',
+    },
+  });
+
   const [inputState, dispatch] = useReducer(inputReducer, {
     value: initialValue || '',
     isValid: initiallyValid,
     touched: false,
   });
-
-  useEffect(() => {
-    setStyles({
-      formControl: {
-        width: '100%',
-      },
-      label: {
-        marginVertical: 8,
-        fontFamily: 'OpenSans_600SemiBold',
-      },
-      input: {
-        paddingHorizontal: 2,
-        paddingVertical: 5,
-        borderBottomColor: '#ccc',
-        borderBottomWidth: 1,
-        fontFamily: 'OpenSans_400Regular',
-      },
-      errorContainer: {
-        marginVertical: 5,
-      },
-      error: {
-        color: colors.danger,
-        fontSize: 13,
-        fontFamily: 'OpenSans_400Regular',
-      },
-    });
-  }, []);
 
   useEffect(() => {
     if (inputState.touched) {

@@ -6,9 +6,43 @@ import MainButton from '../components/UI/MainButton';
 import Shadow from '../constants/shadow';
 import { POSITIVE_AFFIRMATIONS } from '../store/actions/reminders';
 
-const RemindersScreen = (props) => {
-  const [styles, setStyles] = useState({});
+const RemindersScreen = () => {
   const colors = useSelector((state) => state.settings.colors);
+  const [styles] = useState({
+    screen: {
+      flex: 1,
+      backgroundColor: colors.light,
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    reminderBox: {
+      width: '75%',
+    },
+    reminderText: {
+      fontFamily: 'OpenSans_400Regular',
+      fontSize: 20,
+      marginTop: '50%',
+      textAlign: 'center',
+      color: colors.text,
+    },
+    button: {
+      height: 50,
+      width: '50%',
+      marginTop: 40,
+      marginBottom: 150,
+      borderRadius: 10,
+      ...Shadow,
+    },
+    buttonContainer: {
+      borderRadius: 10,
+    },
+    buttonText: {
+      color: 'white',
+      fontFamily: 'Spartan_400Regular',
+      fontSize: 24,
+    },
+  });
+
   const animatedValue = useRef(new Animated.Value(1)).current;
   const remindersList = useSelector((state) => state.reminders.list);
   const enablePositiveAffirmations = useSelector((state) => state.reminders.enablePositiveAffirmations);
@@ -19,42 +53,6 @@ const RemindersScreen = (props) => {
       ? [...POSITIVE_AFFIRMATIONS.filter((_, index) => affirmationsEnabled[index]), ...remindersList]
       : [...remindersList],
   );
-
-  useEffect(() => {
-    setStyles({
-      screen: {
-        flex: 1,
-        backgroundColor: colors.light,
-        justifyContent: 'space-between',
-        alignItems: 'center',
-      },
-      reminderBox: {
-        width: '75%',
-      },
-      reminderText: {
-        fontFamily: 'OpenSans_400Regular',
-        fontSize: 20,
-        marginTop: '50%',
-        textAlign: 'center',
-      },
-      button: {
-        height: 50,
-        width: '50%',
-        marginTop: 40,
-        marginBottom: 150,
-        borderRadius: 10,
-        ...Shadow,
-      },
-      buttonContainer: {
-        borderRadius: 10,
-      },
-      buttonText: {
-        color: 'white',
-        fontFamily: 'Spartan_400Regular',
-        fontSize: 24,
-      },
-    });
-  }, []);
 
   useEffect(() => {
     setDisplayText(getRandomText());

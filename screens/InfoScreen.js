@@ -1,61 +1,59 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { ScrollView, View, Text } from 'react-native';
 
-import colors from '../constants/colors';
-
-const InfoScreen = (props) => {
-  const [styles, setStyles] = useState({});
+const InfoScreen = () => {
   const colors = useSelector((state) => state.settings.colors);
+  const colorMode = useSelector((state) => state.settings.colorPalette);
+  const [styles] = useState({
+    screen: {
+      flex: 1,
+      backgroundColor: colors.light,
+      paddingVertical: 10,
+    },
+    contents: {
+      paddingBottom: 20,
+    },
+    listItem: {
+      paddingVertical: 10,
+      paddingHorizontal: 20,
+    },
+    label: {
+      fontFamily: 'OpenSans_600SemiBold',
+      fontSize: 15,
+      marginBottom: 8,
+      color: colors.text,
+    },
+    description: {
+      fontFamily: 'OpenSans_400Regular',
+      fontSize: 15,
+      color: colors.title,
+    },
+    divider: {
+      height: 1,
+      width: '100%',
+      backgroundColor: colorMode === 'Dark' ? colors.shade2 : '#ccc',
+      marginVertical: 10,
+    },
+    default: {
+      width: '50%',
+      marginLeft: '25%',
+      marginTop: 100,
+    },
+    defaultMessage: {
+      fontFamily: 'OpenSans_400Regular',
+      fontSize: 15,
+      textAlign: 'center',
+      color: colors.text,
+    },
+  });
+
   const name = useSelector((state) => state.medInfo.name);
   const birthday = useSelector((state) => state.medInfo.birthday);
   const address = useSelector((state) => state.medInfo.address);
   const medications = useSelector((state) => state.medInfo.medications);
   const medNotes = useSelector((state) => state.medInfo.medNotes);
   const allergies = useSelector((state) => state.medInfo.allergies);
-
-  useEffect(() => {
-    setStyles({
-      screen: {
-        flex: 1,
-        backgroundColor: colors.light,
-        paddingVertical: 10,
-      },
-      contents: {
-        paddingBottom: 20,
-      },
-      listItem: {
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-      },
-      label: {
-        fontFamily: 'OpenSans_600SemiBold',
-        fontSize: 15,
-        marginBottom: 8,
-      },
-      description: {
-        fontFamily: 'OpenSans_400Regular',
-        fontSize: 15,
-        color: '#777',
-      },
-      divider: {
-        height: 1,
-        width: '100%',
-        backgroundColor: '#ccc',
-        marginVertical: 10,
-      },
-      default: {
-        width: '50%',
-        marginLeft: '25%',
-        marginTop: 100,
-      },
-      defaultMessage: {
-        fontFamily: 'OpenSans_400Regular',
-        fontSize: 15,
-        textAlign: 'center',
-      },
-    });
-  }, []);
 
   return (
     <ScrollView style={styles.screen}>

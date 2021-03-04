@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-one-expression-per-line */
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { View, Text } from 'react-native';
 import { CheckBox } from 'react-native-elements';
@@ -10,8 +10,68 @@ import MainButton from '../components/UI/MainButton';
 const GROUNDING_SENSES = ['see', 'feel', 'hear', 'smell', 'taste'];
 
 const GroundingScreen = (props) => {
-  const [styles, setStyles] = useState({});
   const colors = useSelector((state) => state.settings.colors);
+  const colorMode = useSelector((state) => state.settings.colorPalette);
+  const [styles] = useState({
+    screen: {
+      flex: 1,
+      backgroundColor: colors.light,
+    },
+    prompt: {
+      marginLeft: 60,
+      fontSize: 18,
+      marginTop: 50,
+      width: '80%',
+      fontFamily: 'OpenSans_400Regular',
+      color: colors.text,
+    },
+    checkboxContainer: {
+      marginHorizontal: 50,
+      marginTop: 50,
+    },
+    checkbox: {
+      marginVertical: 12,
+      backgroundColor: colorMode === 'Dark' ? colors.shade1 : 'white',
+      borderColor: colorMode === 'Dark' ? colors.shade3 : '#ccc',
+      ...Shadow,
+    },
+    checked: {
+      color: '#bfbfbf',
+      textDecorationLine: 'line-through',
+    },
+    checkboxText: {
+      color: colors.title,
+    },
+    finishedContainer: {
+      height: '50%',
+      marginTop: '25%',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    finishedText: {
+      width: '75%',
+      fontSize: 18,
+      textAlign: 'center',
+      fontFamily: 'OpenSans_400Regular',
+      color: colors.text,
+    },
+    button: {
+      height: 50,
+      width: '50%',
+      marginTop: 40,
+      borderRadius: 10,
+      ...Shadow,
+    },
+    buttonContainer: {
+      borderRadius: 10,
+    },
+    title: {
+      color: 'white',
+      fontSize: 24,
+      fontFamily: 'Spartan_400Regular',
+    },
+  });
+
   const [phaseNum, setPhaseNum] = useState(5);
   const [checkbox1, setCheckbox1] = useState(false);
   const [checkbox2, setCheckbox2] = useState(false);
@@ -19,67 +79,12 @@ const GroundingScreen = (props) => {
   const [checkbox4, setCheckbox4] = useState(false);
   const [checkbox5, setCheckbox5] = useState(false);
 
-  useEffect(() => {
-    setStyles({
-      screen: {
-        flex: 1,
-        backgroundColor: colors.light,
-      },
-      prompt: {
-        marginLeft: 50,
-        fontSize: 18,
-        marginTop: 50,
-        fontFamily: 'OpenSans_400Regular',
-      },
-      checkboxContainer: {
-        marginHorizontal: 50,
-        marginTop: 50,
-      },
-      checkbox: {
-        marginVertical: 12,
-        backgroundColor: 'white',
-        ...Shadow,
-      },
-      checked: {
-        color: '#bfbfbf',
-        textDecorationLine: 'line-through',
-      },
-      finishedContainer: {
-        height: '50%',
-        marginTop: '25%',
-        alignItems: 'center',
-        justifyContent: 'center',
-      },
-      finishedText: {
-        width: '75%',
-        fontSize: 18,
-        textAlign: 'center',
-        fontFamily: 'OpenSans_400Regular',
-      },
-      button: {
-        height: 50,
-        width: '50%',
-        marginTop: 40,
-        borderRadius: 10,
-        ...Shadow,
-      },
-      buttonContainer: {
-        borderRadius: 10,
-      },
-      title: {
-        color: 'white',
-        fontSize: 24,
-        fontFamily: 'Spartan_400Regular',
-      },
-    });
-  }, []);
-
   const check = useCallback(
     (newValue, setFunc) => {
       setFunc(newValue);
       if (newValue) {
         const numComplete = [checkbox1, checkbox2, checkbox3, checkbox4, checkbox5, newValue].filter(Boolean).length;
-        if (phaseNum === numComplete) {
+        if (phaseNum === numComplete && newValue) {
           setPhaseNum(phaseNum - 1);
           reset();
         }
@@ -100,7 +105,8 @@ const GroundingScreen = (props) => {
     <View style={styles.screen}>
       {phaseNum >= 1 && (
         <Text style={styles.prompt}>
-          Identify {phaseNum} thing{phaseNum === 1 ? '' : 's'} you can {GROUNDING_SENSES[5 - phaseNum]}:
+          Identify and say to yourself {phaseNum} thing{phaseNum === 1 ? '' : 's'} you can{' '}
+          {GROUNDING_SENSES[5 - phaseNum]}:
         </Text>
       )}
       <View style={styles.checkboxContainer}>
@@ -109,9 +115,9 @@ const GroundingScreen = (props) => {
             title={`I can ${GROUNDING_SENSES[5 - phaseNum]} 1 thing`}
             checked={checkbox1}
             onPress={() => check(!checkbox1, setCheckbox1)}
-            textStyle={checkbox1 ? styles.checked : undefined}
+            textStyle={checkbox1 ? styles.checked : styles.checkboxText}
             containerStyle={styles.checkbox}
-            checkedColor={colors.shade3}
+            checkedColor={colorMode === 'Dark' ? colors.accent : colors.shade3}
             fontFamily="OpenSans_600SemiBold"
           />
         )}
@@ -119,10 +125,10 @@ const GroundingScreen = (props) => {
           <CheckBox
             title={`I can ${GROUNDING_SENSES[5 - phaseNum]} a 2nd thing`}
             checked={checkbox2}
-            onPress={(newValue) => check(newValue, setCheckbox2)}
-            textStyle={checkbox2 ? styles.checked : undefined}
+            onPress={() => check(!checkbox2, setCheckbox2)}
+            textStyle={checkbox2 ? styles.checked : styles.checkboxText}
             containerStyle={styles.checkbox}
-            checkedColor={colors.shade3}
+            checkedColor={colorMode === 'Dark' ? colors.accent : colors.shade3}
             fontFamily="OpenSans_600SemiBold"
           />
         )}
@@ -130,10 +136,10 @@ const GroundingScreen = (props) => {
           <CheckBox
             title={`I can ${GROUNDING_SENSES[5 - phaseNum]} a 3rd thing`}
             checked={checkbox3}
-            onPress={(newValue) => check(newValue, setCheckbox3)}
-            textStyle={checkbox3 ? styles.checked : undefined}
+            onPress={() => check(!checkbox3, setCheckbox3)}
+            textStyle={checkbox3 ? styles.checked : styles.checkboxText}
             containerStyle={styles.checkbox}
-            checkedColor={colors.shade3}
+            checkedColor={colorMode === 'Dark' ? colors.accent : colors.shade3}
             fontFamily="OpenSans_600SemiBold"
           />
         )}
@@ -141,10 +147,10 @@ const GroundingScreen = (props) => {
           <CheckBox
             title={`I can ${GROUNDING_SENSES[5 - phaseNum]} a 4th thing`}
             checked={checkbox4}
-            onPress={(newValue) => check(newValue, setCheckbox4)}
-            textStyle={checkbox4 ? styles.checked : undefined}
+            onPress={() => check(!checkbox4, setCheckbox4)}
+            textStyle={checkbox4 ? styles.checked : styles.checkboxText}
             containerStyle={styles.checkbox}
-            checkedColor={colors.shade3}
+            checkedColor={colorMode === 'Dark' ? colors.accent : colors.shade3}
             fontFamily="OpenSans_600SemiBold"
           />
         )}
@@ -152,10 +158,10 @@ const GroundingScreen = (props) => {
           <CheckBox
             title={`I can ${GROUNDING_SENSES[5 - phaseNum]} a 5th thing`}
             checked={checkbox5}
-            onPress={(newValue) => check(newValue, setCheckbox5)}
-            textStyle={checkbox5 ? styles.checked : undefined}
+            onPress={() => check(!checkbox5, setCheckbox5)}
+            textStyle={checkbox5 ? styles.checked : styles.checkboxText}
             containerStyle={styles.checkbox}
-            checkedColor={colors.shade3}
+            checkedColor={colorMode === 'Dark' ? colors.accent : colors.shade3}
             fontFamily="OpenSans_600SemiBold"
           />
         )}

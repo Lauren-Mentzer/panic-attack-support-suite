@@ -11,8 +11,45 @@ import HelpButton from '../../components/HelpButton';
 const ContactSettingsScreen = (props) => {
   const { navigation } = props;
   const dispatch = useDispatch();
-  const [styles, setStyles] = useState({});
   const colors = useSelector((state) => state.settings.colors);
+  const colorMode = useSelector((state) => state.settings.colorPalette);
+  const [styles] = useState({
+    screen: {
+      flex: 1,
+      backgroundColor: colors.light,
+      paddingHorizontal: 20,
+    },
+    contents: {
+      paddingBottom: 20,
+    },
+    label: {
+      fontFamily: 'OpenSans_600SemiBold',
+      fontSize: 16,
+      color: colors.title,
+      marginTop: 30,
+    },
+    headerLabel: {
+      fontFamily: 'OpenSans_600SemiBold',
+      fontSize: 16,
+      color: colors.title,
+    },
+    headerRow: {
+      flexDirection: 'row',
+      width: '100%',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginTop: 30,
+    },
+    inputWrapper: {
+      marginVertical: 10,
+    },
+    description: {
+      marginBottom: 10,
+      fontFamily: 'OpenSans_400Regular',
+      color: colors.text,
+    },
+  });
+
   const contact1 = useSelector((state) => state.contact.contact1);
   const contact2 = useSelector((state) => state.contact.contact2);
   const [contact1Name, setContact1Name] = useState(contact1.nickname);
@@ -22,44 +59,6 @@ const ContactSettingsScreen = (props) => {
   const [contact2Phone, setContact2Phone] = useState(contact2.phone);
   const [contact2Message, setContact2Message] = useState(contact2.message);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-
-  useEffect(() => {
-    setStyles({
-      screen: {
-        flex: 1,
-        backgroundColor: colors.light,
-        paddingHorizontal: 20,
-      },
-      contents: {
-        paddingBottom: 20,
-      },
-      label: {
-        fontFamily: 'OpenSans_600SemiBold',
-        fontSize: 16,
-        color: '#777',
-        marginTop: 30,
-      },
-      headerLabel: {
-        fontFamily: 'OpenSans_600SemiBold',
-        fontSize: 16,
-        color: '#777',
-      },
-      headerRow: {
-        flexDirection: 'row',
-        width: '100%',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        marginTop: 30,
-      },
-      inputWrapper: {
-        marginVertical: 10,
-      },
-      description: {
-        marginBottom: 10,
-        fontFamily: 'OpenSans_400Regular',
-      },
-    });
-  }, []);
 
   const save = useCallback(() => {
     dispatch(
@@ -74,7 +73,17 @@ const ContactSettingsScreen = (props) => {
     props.navigation.setOptions({
       headerRight: () => (
         <HeaderButtons HeaderButtonComponent={HeaderButton}>
-          <Item title="Settings" iconName={Platform.OS === 'ios' ? 'save-sharp' : 'save'} onPress={save} />
+          <Item
+            title="Settings"
+            iconName={Platform.OS === 'ios' ? 'save-sharp' : 'save'}
+            onPress={save}
+            buttonStyle={{
+              color: Platform.select({
+                ios: colorMode === 'Dark' ? 'white' : colors.primary,
+                android: 'white',
+              }),
+            }}
+          />
         </HeaderButtons>
       ),
     });
@@ -161,6 +170,7 @@ const ContactSettingsScreen = (props) => {
             autoCapitalize="sentences"
             returnKeyType="next"
             editable
+            multiline
             onInputChange={(_, value) => setContact1Message(value)}
             initialValue={contact1Message}
             initiallyValid
@@ -198,6 +208,7 @@ const ContactSettingsScreen = (props) => {
             autoCapitalize="sentences"
             returnKeyType="next"
             editable
+            multiline
             onInputChange={(_, value) => setContact2Message(value)}
             initialValue={contact2Message}
             initiallyValid
