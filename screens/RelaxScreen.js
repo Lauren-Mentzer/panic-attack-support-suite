@@ -6,6 +6,7 @@ import { activateKeepAwake, deactivateKeepAwake } from 'expo-keep-awake';
 
 import Shadow from '../constants/shadow';
 import MainButton from '../components/UI/MainButton';
+import WalkthroughModal from '../components/WalkthroughModal';
 
 const RELAX_PROMPTS = [
   'Place your phone down in a spot where you will be able to see the screen as you do these muscle relaxation exercises. Press "Start" when you are ready.',
@@ -19,6 +20,11 @@ const RELAX_PROMPTS = [
   'Squeeze your eyes shut and scrunch your face up as much as possible',
   'Tighten the muscles in your entire body at once',
   'Nicely done, you have completed this muscle relaxation exercise. Hopefully you feel a bit less tense and more relaxed.',
+];
+
+const MODAL_TEXT = [
+  'Before or after a panic attack, your body might feel tight, your muscles clenched from the effort of trying to remain in control. This progressive muscle relaxation exercise can help your body to unclench and relax.',
+  "This page will take you through a timed exercise where, one muscle group at a time, you will be asked to clench and then relax. By doing this through the entire body, you will learn to relax your muscles and perhaps even identify tension you didn't even realize you had.",
 ];
 
 const RelaxScreen = (props) => {
@@ -121,6 +127,7 @@ const RelaxScreen = (props) => {
 
   return (
     <View style={styles.screen}>
+      <WalkthroughModal name="relax" textArray={MODAL_TEXT} />
       <View style={styles.promptBox}>
         <Text style={styles.prompt}>{isRelax ? 'Relax' : RELAX_PROMPTS[phaseNum]}</Text>
       </View>

@@ -4,7 +4,15 @@ import { View, Text, Animated } from 'react-native';
 
 import MainButton from '../components/UI/MainButton';
 import Shadow from '../constants/shadow';
+import WalkthroughModal from '../components/WalkthroughModal';
 import { POSITIVE_AFFIRMATIONS } from '../store/actions/reminders';
+
+const MODAL_TEXT = [
+  'It can often be difficult to remember things when in the middle of a panic attack. Even if you have previously identified ways to help yourself manage your anxiety, while in the midst of a panic it can be difficult to recall. This page is meant to remind you of such things you might otherwise forget.',
+  'We have included some example reminders here, but these can be customized via the settings button at the top of the screen. Please include any reminders that you think would be helpful to you!',
+  'Interspersed with these reminders are some positive affirmations that can be helpful to remember and focus on when you are feeling stressed.',
+  "This page doesn't have an 'ending' like some of our other exercises - the reminders will repeat to make sure you focus on each one as much as needed.",
+];
 
 const RemindersScreen = () => {
   const colors = useSelector((state) => state.settings.colors);
@@ -96,6 +104,7 @@ const RemindersScreen = () => {
 
   return (
     <View style={styles.screen}>
+      <WalkthroughModal name="reminders" textArray={MODAL_TEXT} />
       <Animated.View
         style={{
           ...styles.reminderBox,

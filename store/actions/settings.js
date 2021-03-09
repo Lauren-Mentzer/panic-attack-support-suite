@@ -8,6 +8,7 @@ import {
   REMINDERS_ENABLED,
   COMMUNICATE_ENABLED,
   CONTACT_ENABLED,
+  FIRST_TIME,
 } from '../../constants/keys';
 import { Seafoam, Forest, Dusk, Desert, Monochrome, Dark } from '../../constants/colors';
 
@@ -17,6 +18,7 @@ export const SET_COLORS = 'SET_COLORS';
 export const SET_COLOR_PALETTE = 'SET_COLOR_PALETTE';
 export const SET_ENABLED = 'SET_ENABLED';
 export const SET_EMERGENCY = 'SET_EMERGENCY';
+export const SET_WALKTHROUGH = 'SET_WALKTHROUGH';
 
 export const setColorPalette = (palette) => {
   return (dispatch) => {
@@ -86,6 +88,22 @@ export const setEmergency = (value) => {
   };
 };
 
+export const setWalkthrough = (value, key) => {
+  return (dispatch, getState) => {
+    const walkthrough = getState((state) => state.settings.walkthrough);
+    const tempState = { ...walkthrough };
+    if (key === null) {
+      Object.keys(tempState).forEach((stateKey) => {
+        tempState[stateKey] = value;
+      });
+    } else {
+      tempState[key] = value;
+    }
+    storeData(FIRST_TIME, tempState);
+    dispatch(setWalkthroughAction(value, key));
+  };
+};
+
 export const setColors = (palette) => {
   return {
     type: SET_COLORS,
@@ -112,5 +130,13 @@ export const setEmergencyAction = (value) => {
   return {
     type: SET_EMERGENCY,
     value,
+  };
+};
+
+export const setWalkthroughAction = (value, key) => {
+  return {
+    type: SET_WALKTHROUGH,
+    value,
+    key,
   };
 };

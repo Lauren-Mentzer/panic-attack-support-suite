@@ -13,9 +13,10 @@ import {
   REMINDERS_ENABLED,
   COMMUNICATE_ENABLED,
   CONTACT_ENABLED,
+  FIRST_TIME,
 } from '../constants/keys';
 import { setContacts } from '../store/actions/contact';
-import { setColorPalette, setEmergencyAction, setEnabledAction } from '../store/actions/settings';
+import { setColorPalette, setEmergencyAction, setEnabledAction, setWalkthroughAction } from '../store/actions/settings';
 import { setList } from '../store/actions/flashcards';
 import { setRemindersList, setPositiveAffirmationsAction, enableAffirmationAction } from '../store/actions/reminders';
 import { saveInfoAction } from '../store/actions/medInfo';
@@ -72,6 +73,12 @@ const init = () => {
             break;
           case AFFIRMATIONS_ENABLED:
             dispatch(setPositiveAffirmationsAction(JSON.parse(pair[1])));
+            break;
+          case FIRST_TIME:
+            tempValue = JSON.parse(pair[1]);
+            Object.keys(tempValue).forEach((key) => {
+              dispatch(setWalkthroughAction(tempValue[key], key));
+            });
             break;
           default:
         }

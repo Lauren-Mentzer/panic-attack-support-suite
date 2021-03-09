@@ -6,7 +6,12 @@ import { deactivateKeepAwake, activateKeepAwake } from 'expo-keep-awake';
 
 import Card from '../components/UI/Card';
 import MainButton from '../components/UI/MainButton';
+import WalkthroughModal from '../components/WalkthroughModal';
 import { saveMessage } from '../store/actions/messages';
+
+const MODAL_TEXT = [
+  'This page is another communication tool for when it is difficult to speak verbally. Here, you can write messages (as if they are a text message) to show to the person you are trying to communicate with. This could be helpful if the person asks a question that is not addressed in your flashcards.',
+];
 
 const ChatScreen = (props) => {
   const { navigation } = props;
@@ -91,6 +96,7 @@ const ChatScreen = (props) => {
 
   return (
     <View style={styles.screen}>
+      <WalkthroughModal name="chat" textArray={MODAL_TEXT} />
       <SafeAreaView style={styles.messagesContainer}>
         <ScrollView
           contentContainerStyle={styles.scroll}

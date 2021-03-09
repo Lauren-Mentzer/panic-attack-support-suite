@@ -4,9 +4,9 @@ import { StyleSheet, Modal, View } from 'react-native';
 import Card from './Card';
 
 const CardModal = (props) => {
-  const { visible, children } = props;
+  const { visible, animated, children } = props;
   return (
-    <Modal visible={visible} presentationStyle="overFullScreen" transparent>
+    <Modal visible={visible} presentationStyle="overFullScreen" transparent animationType={animated ? 'fade' : 'none'}>
       <View style={styles.modal}>
         <Card style={styles.modalContent}>{children}</Card>
       </View>

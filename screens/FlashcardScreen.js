@@ -7,6 +7,13 @@ import { deactivateKeepAwake, activateKeepAwake } from 'expo-keep-awake';
 
 import Shadow from '../constants/shadow';
 import FlashcardSlider from '../components/UI/Slider';
+import WalkthroughModal from '../components/WalkthroughModal';
+
+const MODAL_TEXT = [
+  'It can be difficult or impossible to speak for any number of reasons, whether during a panic attack or not, and this section of the app aims to help you communicate with those around you even when non- or semi-verbal.',
+  "This page provides you with a space to view virtual 'flashcards' which should display messages that you think would be useful to have on-hand. The people around you may not understand what is happening, so an explanation could be useful.",
+  "We've included a few sample messages, but these can be changed via the settings in the top right corner. And don't forget to check out the 'chat' tab along the bottom!",
+];
 
 const FlaschardScreen = (props) => {
   const { navigation } = props;
@@ -70,6 +77,7 @@ const FlaschardScreen = (props) => {
 
   return (
     <View style={styles.screen}>
+      <WalkthroughModal name="flashcards" textArray={MODAL_TEXT} />
       <FlashcardSlider
         dataList={flashcardList}
         cardWidth={Dimensions.get('window').width * 0.75}

@@ -7,10 +7,15 @@ import * as SMS from 'expo-sms';
 
 import Shadow from '../constants/shadow';
 import MainButton from '../components/UI/MainButton';
+import WalkthroughModal from '../components/WalkthroughModal';
+
+const MODAL_TEXT = [
+  'This is your emergency contact screen. It can be helpful and very important to let a parent, partner, friend, or other trusted person know that you are having a panic attack, and this easy-access screen makes it simple.',
+  'After you have inputted their information via the settings button in the top corner, you will have the option to either call or to text a predetermined message to up to two contacts.',
+];
 
 const ContactScreen = () => {
   const colors = useSelector((state) => state.settings.colors);
-  const colorMode = useSelector((state) => state.settings.colorPalette);
   const [styles] = useState({
     screen: {
       flex: 1,
@@ -58,6 +63,7 @@ const ContactScreen = () => {
 
   return (
     <View style={styles.screen}>
+      <WalkthroughModal name="contact" textArray={MODAL_TEXT} />
       {!!contact1.phone && !!contact1.message.length && (
         <MainButton
           color={colors.shade1}

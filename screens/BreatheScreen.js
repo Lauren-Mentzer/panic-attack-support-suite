@@ -7,6 +7,7 @@ import { deactivateKeepAwake, activateKeepAwake } from 'expo-keep-awake';
 import Toggle from '../components/UI/Toggle';
 import Shadow from '../constants/shadow';
 import MainButton from '../components/UI/MainButton';
+import WalkthroughModal from '../components/WalkthroughModal';
 
 const PANIC_MODE = 0;
 const PREVENT_MODE = 1;
@@ -16,6 +17,12 @@ const HOLD_TEXT = 'Hold';
 const IN_TIME = [4, 4];
 const HOLD_TIME = [1, 7];
 const OUT_TIME = [4, 8];
+
+const MODAL_TEXT = [
+  "During a panic attack, or even just a stressful situation, the body often turns to a 'fight or flight' response, provoking a heightened heart rate, blood pressure, and the inability to catch your breath. If this is something you experience frequently, learning some deep breathing exercises can help to invoke the relaxation response. This page can guide you through two such breathing exercises.",
+  'The first exercise is geared toward when you are currently experiencing a panic attack. The simple rhythm of breathing in for 4 seconds, holding for 1, and breathing out for 4 is easy to stick to, but if you are having trouble slowing your breath down, feel free to pause the animation until you feel you are ready to resume.',
+  "The second exercise, which can be accessed by toggling to 'Preventative Mode' at the bottom of the screen, is a more involved exercise that is best done before the onset of a panic attack. If you can feel your heart rate rising from a stressful situation, it might be helpful to try this 4-7-8 rhythm to keep your body from entering its 'fight or flight' state. It can even be helpful to practice this exercise when you are feeling calm, so that your body gets used to the idea that deep breathing is linked to feeling relaxed.",
+];
 
 const BreatheScreen = (props) => {
   const { navigation } = props;
@@ -215,6 +222,7 @@ const BreatheScreen = (props) => {
 
   return (
     <View style={styles.screen}>
+      <WalkthroughModal name="breathe" textArray={MODAL_TEXT} />
       <View style={styles.content}>
         <View style={styles.textBox}>
           <Text style={styles.text}>{displayText}</Text>
