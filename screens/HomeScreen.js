@@ -58,9 +58,13 @@ const HomeScreen = (props) => {
   const buttonNum = Object.keys(enabledFeatures).filter((key) => enabledFeatures[key]).length;
   const height = 100 / (buttonNum + 2);
   const interpolater = interpolateRgb(colors.shade1, colors.shade3);
+  const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     setStyles(getStyles(colors));
+    setTimeout(() => {
+      setModalVisible(true);
+    }, 500);
   }, [colors]);
 
   useEffect(() => {
@@ -87,7 +91,7 @@ const HomeScreen = (props) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <WalkthroughModal name="home" textArray={MODAL_TEXT} />
+      {modalVisible && <WalkthroughModal name="home" textArray={MODAL_TEXT} />}
       <View style={styles.screen}>
         {BUTTON_NAMES.filter((name) => {
           const key = name.toLowerCase();

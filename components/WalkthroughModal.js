@@ -20,7 +20,6 @@ const WalkthroughModal = ({ name, textArray = [] }) => {
       justifyContent: 'space-between',
     },
     buttonRow: {
-      marginVertical: 10,
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
@@ -50,6 +49,7 @@ const WalkthroughModal = ({ name, textArray = [] }) => {
     },
     invisible: {
       height: 0,
+      width: 0,
       color: 'transparent',
     },
   });
@@ -65,7 +65,7 @@ const WalkthroughModal = ({ name, textArray = [] }) => {
   };
 
   return (
-    <CardModal visible={firstTime}>
+    <CardModal visible={firstTime} animated>
       <View style={styles.container}>
         {textArray && <Text style={styles.modalText}>{textArray[arrayIndex]}</Text>}
         <View style={styles.buttonRow}>
