@@ -9,6 +9,11 @@ import MessageCard from '../../components/MessageCard';
 import MainButton from '../../components/UI/MainButton';
 import { addCard, editCard, removeCard } from '../../store/actions/flashcards';
 import HelpButton from '../../components/HelpButton';
+import WalkthroughModal from '../../components/WalkthroughModal';
+
+const MODAL_TEXT = [
+  'Here, you can add, edit, and delete messages from your collection of flashcard messages. We have a few sample messages included already, but feel free to edit or delete them, and scroll to the bottom of the list to add more!',
+];
 
 const CommunicateSettingsScreen = () => {
   const dispatch = useDispatch();
@@ -146,6 +151,7 @@ const CommunicateSettingsScreen = () => {
 
   return (
     <ScrollView style={styles.screen} ref={scrollRef}>
+      <WalkthroughModal name="communicateSettings" textArray={MODAL_TEXT} />
       <View style={styles.contents}>
         <View style={styles.header}>
           <Text style={styles.headerText}>FLASHCARD MESSAGES</Text>

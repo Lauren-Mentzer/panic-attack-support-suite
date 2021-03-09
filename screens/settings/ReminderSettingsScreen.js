@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ScrollView, View, Text, Platform, Switch, KeyboardAvoidingView, TextInput } from 'react-native';
+import React, { useCallback, useRef, useState } from 'react';
+import { ScrollView, View, Text, Platform, KeyboardAvoidingView, TextInput } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
 import { CheckBox } from 'react-native-elements';
@@ -12,6 +12,7 @@ import MessageCard from '../../components/MessageCard';
 import BottomDrawer from '../../components/UI/BottomDrawer';
 import HelpButton from '../../components/HelpButton';
 import Card from '../../components/UI/Card';
+import WalkthroughModal from '../../components/WalkthroughModal';
 import {
   setPositiveAffirmations,
   POSITIVE_AFFIRMATIONS,
@@ -21,6 +22,11 @@ import {
   addReminder,
 } from '../../store/actions/reminders';
 import MainButton from '../../components/UI/MainButton';
+
+const MODAL_TEXT = [
+  'Here, you can control what reminders will appear on the Reminders page. We have some sample reminders filled in below, but feel free to edit or delete them, and add any you feel would be helpful to you by scrolling to the bottom of the page.',
+  'You can also turn on and off the addition of positive affirmations from your reminders list, and edit which affirmations you would like to be included, since not all affirmations resonate with everyone. If you want to add your own, just add them in the reminders section!',
+];
 
 const ReminderSettingsScreen = () => {
   const dispatch = useDispatch();
@@ -205,6 +211,7 @@ const ReminderSettingsScreen = () => {
 
   return (
     <View style={styles.screen}>
+      <WalkthroughModal name="remindersSettings" textArray={MODAL_TEXT} />
       <ScrollView style={styles.screen} ref={scrollRef}>
         <View style={styles.container}>
           <View style={styles.headerRow}>

@@ -1,14 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { ScrollView, View, Text, Platform, Switch } from 'react-native';
+import { ScrollView, View, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { color } from 'd3-color';
 import { CheckBox } from 'react-native-elements';
 
+import WalkthroughModal from '../components/WalkthroughModal';
 import Toggle from '../components/UI/Toggle';
 import TouchableComponent from '../components/UI/TouchableComponent';
 import BottomDrawer from '../components/UI/BottomDrawer';
-import { setEmergency, setEnabled, COLOR_PALETTES, setColorPalette } from '../store/actions/settings';
+import { setEmergency, setEnabled, COLOR_PALETTES, setColorPalette, setWalkthrough } from '../store/actions/settings';
+import CardModal from '../components/UI/CardModal';
+import MainButton from '../components/UI/MainButton';
+
+const MODAL_TEXT = [
+  "This is the application's main settings page. From here, you can turn on and off any feature of the app, depending on what you find helpful. If turned off, the button to access that feature will simply disappear from the home screen, leaving the app uncluttered by features you do not need.",
+];
 
 const FEATURES_TEXT = [
   ['Breathe', 'Guided breathing exercises to help slow your breathing'],
@@ -82,25 +89,48 @@ const getStyles = (colors, colorMode) => {
     checkboxText: {
       color: colors.title,
     },
+    modalButtonRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      marginTop: 15,
+    },
+    modalButton: {
+      marginLeft: 10,
+      width: 100,
+      height: 35,
+      borderRadius: 5,
+    },
+    buttonText: {
+      fontFamily: 'Spartan_400Regular',
+      color: 'white',
+      fontSize: 14,
+    },
+    buttonContainer: {
+      borderRadius: 5,
+    },
+    modalText: {
+      color: colors.text,
+      fontFamily: 'OpenSans_400Regular',
+    },
   };
 };
 
 const SettingsScreen = (props) => {
+  const { navigation } = props;
   const dispatch = useDispatch();
   const colors = useSelector((state) => state.settings.colors);
   const colorMode = useSelector((state) => state.settings.colorPalette);
   const [styles, setStyles] = useState(getStyles(colors, colorMode));
+  const enabledFeatures = useSelector((state) => state.settings.enabled);
+  const emergencyInfo = useSelector((state) => state.settings.emergencyInfo);
+  const [colorsSliderOpen, setcolorsSliderOpen] = useState(false);
+  const [walkthroughModalOpen, setWalkthroughModalOpen] = useState(false);
+  const fadedColor = color(colors.shade2);
+  fadedColor.opacity = 0.3;
 
   useEffect(() => {
     setStyles(getStyles(colors));
   }, [colors]);
-
-  const enabledFeatures = useSelector((state) => state.settings.enabled);
-  const emergencyInfo = useSelector((state) => state.settings.emergencyInfo);
-  const colorPalette = useSelector((state) => state.settings.colorPalette);
-  const [colorsSliderOpen, setcolorsSliderOpen] = useState(false);
-  const fadedColor = color(colors.shade2);
-  fadedColor.opacity = 0.3;
 
   const toggleFeature = (feature) => {
     const newValue = !enabledFeatures[feature];
@@ -115,8 +145,38 @@ const SettingsScreen = (props) => {
     dispatch(setColorPalette(palette));
   };
 
+  const enableWalkthrough = () => {
+    setWalkthroughModalOpen(false);
+    navigation.navigate('Home');
+    setTimeout(() => {
+      dispatch(setWalkthrough(true, null));
+    }, 1000);
+  };
+
   return (
     <View style={styles.screen}>
+      <WalkthroughModal name="settings" textArray={MODAL_TEXT} />
+      <CardModal visible={walkthroughModalOpen}>
+        <Text style={styles.modalText}>Would you like to enable the application walkthrough?</Text>
+        <View style={styles.modalButtonRow}>
+          <MainButton
+            style={styles.modalButton}
+            containerStyle={styles.buttonContainer}
+            color={colorMode === 'Dark' ? colors.shade3 : colors.primary}
+            onPress={() => setWalkthroughModalOpen(false)}
+          >
+            <Text style={styles.buttonText}>No</Text>
+          </MainButton>
+          <MainButton
+            style={styles.modalButton}
+            containerStyle={styles.buttonContainer}
+            color={colorMode === 'Dark' ? colors.accent : colors.shade2}
+            onPress={enableWalkthrough}
+          >
+            <Text style={{ ...styles.buttonText, color: colorMode === 'Dark' ? 'black' : 'white' }}>Yes</Text>
+          </MainButton>
+        </View>
+      </CardModal>
       <ScrollView style={styles.screen}>
         <View style={styles.container}>
           <Text style={styles.label}>APP BEHAVIOR</Text>
@@ -130,10 +190,7 @@ const SettingsScreen = (props) => {
             <Toggle toggleValue={emergencyInfo} toggleHandler={toggleEmergency} />
           </View>
           {emergencyInfo && (
-            <TouchableComponent
-              activeOpacity={0.5}
-              onPress={() => props.navigation.navigate('Emergency Info Settings')}
-            >
+            <TouchableComponent activeOpacity={0.5} onPress={() => navigation.navigate('Emergency Info Settings')}>
               <View style={styles.subItem}>
                 <Text style={styles.title}>Edit Emergency Information</Text>
                 <Ionicons name="chevron-forward" size={25} color={colors.text} />
@@ -143,6 +200,12 @@ const SettingsScreen = (props) => {
           <TouchableComponent activeOpacity={0.5} onPress={() => setcolorsSliderOpen((value) => !value)}>
             <View style={styles.switchItem}>
               <Text style={styles.title}>Color Theme</Text>
+              <Ionicons name="chevron-forward" size={25} color={colors.text} />
+            </View>
+          </TouchableComponent>
+          <TouchableComponent activeOpacity={0.5} onPress={() => setWalkthroughModalOpen(true)}>
+            <View style={styles.switchItem}>
+              <Text style={styles.title}>App Walkthrough</Text>
               <Ionicons name="chevron-forward" size={25} color={colors.text} />
             </View>
           </TouchableComponent>
@@ -160,7 +223,7 @@ const SettingsScreen = (props) => {
                   <Toggle toggleValue={enabledFeatures[key]} toggleHandler={() => toggleFeature(key)} />
                 </View>
                 {feature[2] && enabledFeatures[key] && (
-                  <TouchableComponent activeOpacity={0.5} onPress={() => props.navigation.navigate(feature[2])}>
+                  <TouchableComponent activeOpacity={0.5} onPress={() => navigation.navigate(feature[2])}>
                     <View style={styles.subItem}>
                       <Text style={styles.title}>{feature[3]}</Text>
                       <Ionicons name="chevron-forward" size={25} color={colors.text} />
@@ -182,7 +245,7 @@ const SettingsScreen = (props) => {
               uncheckedIcon="circle-o"
               fontFamily="OpenSans_600SemiBold"
               onPress={() => choosecolors(name)}
-              checked={name === colorPalette}
+              checked={name === colorMode}
               containerStyle={styles.checkbox}
               textStyle={styles.checkboxText}
             />

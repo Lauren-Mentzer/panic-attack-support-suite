@@ -7,6 +7,11 @@ import Input from '../../components/UI/Input';
 import { saveInfo } from '../../store/actions/medInfo';
 import HeaderButton from '../../components/UI/HeaderButton';
 import HelpButton from '../../components/HelpButton';
+import WalkthroughModal from '../../components/WalkthroughModal';
+
+const MODAL_TEXT = [
+  'Here you can input as much information as you are comfortable sharing in case of an emergency. No field is required, so only fill it out to your comfort level. Be sure to hit the save button in the top right corner before leaving the page.',
+];
 
 const InfoSettingsScreen = (props) => {
   const dispatch = useDispatch();
@@ -134,6 +139,7 @@ const InfoSettingsScreen = (props) => {
 
   return (
     <ScrollView style={styles.screen}>
+      <WalkthroughModal name="emergencySettings" textArray={MODAL_TEXT} />
       <View style={styles.contents}>
         <View style={styles.headerRow}>
           <Text style={styles.headerLabel}>EMERGENCY INFORMATION</Text>

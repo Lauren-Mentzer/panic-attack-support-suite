@@ -6,8 +6,14 @@ import { CheckBox } from 'react-native-elements';
 
 import Shadow from '../constants/shadow';
 import MainButton from '../components/UI/MainButton';
+import WalkthroughModal from '../components/WalkthroughModal';
 
 const GROUNDING_SENSES = ['see', 'feel', 'hear', 'smell', 'taste'];
+
+const MODAL_TEXT = [
+  'Often during a panic attack or other stressful situation, you might become very focused on your own thoughts and feelings. Grounding is a technique that can help you to focus on the present moment, and show your body that there is not an actual threat around you.',
+  'This exercise will ask you to identify to yourself a number of things around you that you can experience with your 5 senses, from sight all the way to taste. This self-regulation can be useful not only during a panic attack, but also other distressing situations such as a PTSD flashback or dissociation.',
+];
 
 const GroundingScreen = (props) => {
   const colors = useSelector((state) => state.settings.colors);
@@ -103,6 +109,7 @@ const GroundingScreen = (props) => {
 
   return (
     <View style={styles.screen}>
+      <WalkthroughModal name="grounding" textArray={MODAL_TEXT} />
       {phaseNum >= 1 && (
         <Text style={styles.prompt}>
           Identify and say to yourself {phaseNum} thing{phaseNum === 1 ? '' : 's'} you can{' '}

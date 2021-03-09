@@ -2,6 +2,12 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { ScrollView, View, Text } from 'react-native';
 
+import WalkthroughModal from '../components/WalkthroughModal';
+
+const MODAL_TEXT = [
+  'This screen displays any personal information you feel is necessary for if your panic attack turns into a medical emergency. For example, you can show people this screen so that they can know your full name, medical conditions, or any medications you are on.',
+];
+
 const InfoScreen = () => {
   const colors = useSelector((state) => state.settings.colors);
   const colorMode = useSelector((state) => state.settings.colorPalette);
@@ -57,6 +63,7 @@ const InfoScreen = () => {
 
   return (
     <ScrollView style={styles.screen}>
+      <WalkthroughModal name="emergency" textArray={MODAL_TEXT} />
       <View style={styles.contents}>
         {name && (
           <View>

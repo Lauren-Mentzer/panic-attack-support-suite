@@ -7,6 +7,11 @@ import Input from '../../components/UI/Input';
 import HeaderButton from '../../components/UI/HeaderButton';
 import { editContact } from '../../store/actions/contact';
 import HelpButton from '../../components/HelpButton';
+import WalkthroughModal from '../../components/WalkthroughModal';
+
+const MODAL_TEXT = [
+  "Here you can input your emergency contacts' information so that the calling and texting features will be enabled. If you do not input a default text message, only the calling feature will be active, and if you only fill in information for one contact, that's ok too! Just be sure to let your contacts know about this application so that they know what to expect. Be sure to hit the save button in the top right before leaving the page.",
+];
 
 const ContactSettingsScreen = (props) => {
   const { navigation } = props;
@@ -118,6 +123,7 @@ const ContactSettingsScreen = (props) => {
 
   return (
     <ScrollView style={styles.screen}>
+      <WalkthroughModal name="contactSettings" textArray={MODAL_TEXT} />
       <View style={styles.contents}>
         <View style={styles.headerRow}>
           <Text style={styles.headerLabel}>CONTACT 1</Text>

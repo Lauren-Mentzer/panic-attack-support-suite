@@ -1,4 +1,4 @@
-import { SET_COLORS, SET_ENABLED, SET_EMERGENCY, SET_COLOR_PALETTE } from '../actions/settings';
+import { SET_COLORS, SET_ENABLED, SET_EMERGENCY, SET_COLOR_PALETTE, SET_WALKTHROUGH } from '../actions/settings';
 
 const initialState = {
   colors: {
@@ -20,6 +20,22 @@ const initialState = {
     contact: true,
   },
   emergencyInfo: true,
+  walkthrough: {
+    home: true,
+    settings: true,
+    emergency: true,
+    emergencySettings: true,
+    breathe: true,
+    grounding: true,
+    relax: true,
+    reminders: true,
+    remindersSettings: true,
+    flashcards: true,
+    chat: true,
+    communicateSettings: true,
+    contact: true,
+    contactSettings: true,
+  },
 };
 
 const settingsReducer = (state = initialState, action) => {
@@ -35,6 +51,16 @@ const settingsReducer = (state = initialState, action) => {
       return { ...state, enabled: tempState };
     case SET_EMERGENCY:
       return { ...state, emergencyInfo: action.value };
+    case SET_WALKTHROUGH:
+      tempState = { ...state.walkthrough };
+      if (action.key === null) {
+        Object.keys(tempState).forEach((key) => {
+          tempState[key] = action.value;
+        });
+        return { ...state, walkthrough: tempState };
+      }
+      tempState[action.key] = action.value;
+      return { ...state, walkthrough: tempState };
     default:
       return state;
   }
