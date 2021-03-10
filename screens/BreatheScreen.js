@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { View, Text, Animated } from 'react-native';
 import { color } from 'd3-color';
 import { deactivateKeepAwake, activateKeepAwake } from 'expo-keep-awake';
+import * as Speech from 'expo-speech';
 
 import Toggle from '../components/UI/Toggle';
 import Shadow from '../constants/shadow';
@@ -14,6 +15,9 @@ const PREVENT_MODE = 1;
 const IN_TEXT = 'Breathe in through your nose';
 const OUT_TEXT = 'Breathe out through your mouth';
 const HOLD_TEXT = 'Hold';
+const IN_SPEECH = 'In';
+const OUT_SPEECH = 'Out';
+const HOLD_SPEECH = 'Hold';
 const IN_TIME = [4, 4];
 const HOLD_TIME = [1, 7];
 const OUT_TIME = [4, 8];
@@ -93,12 +97,18 @@ const BreatheScreen = (props) => {
       fontSize: 24,
       fontFamily: 'Spartan_400Regular',
     },
+    audioRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginTop: 20,
+    },
   });
 
   const [displayText, setDisplayText] = useState(IN_TEXT);
   const [displayNumber, setDisplayNumber] = useState(4);
   const [mode, setMode] = useState(PANIC_MODE);
   const [isPaused, setIsPaused] = useState(false);
+  const [audioOn, setAudioOn] = useState(false);
   const animationValue = useRef(new Animated.Value(0)).current;
   const fadedPrimary = color(colors.primary);
   fadedPrimary.opacity = 0.3;
@@ -128,14 +138,25 @@ const BreatheScreen = (props) => {
           newNum = mode === 0 ? null : HOLD_TIME[mode];
           newText = HOLD_TEXT;
           setDisplayText(newText);
+          if (audioOn) {
+            Speech.speak(HOLD_SPEECH);
+          }
         } else if (displayText === OUT_TEXT && newNum === 0) {
           newNum = IN_TIME[mode];
           newText = IN_TEXT;
           setDisplayText(newText);
+          if (audioOn) {
+            Speech.speak(IN_SPEECH);
+          }
         } else if (displayText === HOLD_TEXT && !newNum) {
           newNum = OUT_TIME[mode];
           newText = OUT_TEXT;
           setDisplayText(newText);
+          if (audioOn) {
+            Speech.speak(OUT_SPEECH);
+          }
+        } else if (newNum && audioOn) {
+          Speech.speak(newNum.toString());
         }
         setDisplayNumber(newNum);
       }, 1000);
@@ -143,7 +164,7 @@ const BreatheScreen = (props) => {
     return () => {
       clearTimeout(timeout);
     };
-  }, [displayNumber, mode, isPaused]);
+  }, [displayNumber, mode, isPaused, audioOn]);
 
   useEffect(() => {
     if (displayText === IN_TEXT && !isPaused) {
@@ -170,6 +191,10 @@ const BreatheScreen = (props) => {
     setDisplayNumber(IN_TIME[newMode]);
     animationValue.setValue(0);
   }, [mode]);
+
+  const toggleAudio = () => {
+    setAudioOn((isOn) => !isOn);
+  };
 
   const togglePause = useCallback(() => {
     if (isPaused) {
@@ -243,6 +268,10 @@ const BreatheScreen = (props) => {
               }),
             }}
           />
+        </View>
+        <View style={styles.audioRow}>
+          <Text style={styles.label}>Turn Audio Cues On</Text>
+          <Toggle toggleValue={audioOn} toggleHandler={toggleAudio} />
         </View>
         <MainButton
           color={colors.shade2}

@@ -3,10 +3,12 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { View, Text } from 'react-native';
 import { activateKeepAwake, deactivateKeepAwake } from 'expo-keep-awake';
+import * as Speech from 'expo-speech';
 
 import Shadow from '../constants/shadow';
 import MainButton from '../components/UI/MainButton';
 import WalkthroughModal from '../components/WalkthroughModal';
+import Toggle from '../components/UI/Toggle';
 
 const RELAX_PROMPTS = [
   'Place your phone down in a spot where you will be able to see the screen as you do these muscle relaxation exercises. Press "Start" when you are ready.',
@@ -20,6 +22,20 @@ const RELAX_PROMPTS = [
   'Squeeze your eyes shut and scrunch your face up as much as possible',
   'Tighten the muscles in your entire body at once',
   'Nicely done, you have completed this muscle relaxation exercise. Hopefully you feel a bit less tense and more relaxed.',
+];
+
+const RELAX_AUDIO = [
+  '',
+  'Toes',
+  'Calves',
+  'Upper Legs',
+  'Stomach',
+  'Shoulders',
+  'Lower Arms',
+  'Fists',
+  'Face',
+  'Body',
+  'Nicely done',
 ];
 
 const MODAL_TEXT = [
@@ -68,12 +84,27 @@ const RelaxScreen = (props) => {
       fontSize: 24,
       fontFamily: 'Spartan_400Regular',
     },
+    audioRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginTop: 100,
+    },
+    label: {
+      fontFamily: 'OpenSans_600SemiBold',
+      color: colors.title,
+      marginRight: 10,
+    },
+    container: {
+      width: '100%',
+      alignItems: 'center',
+    },
   });
 
   const [phaseNum, setPhaseNum] = useState(0);
   const [seconds, setSeconds] = useState(0);
   const [isRelax, setIsRelax] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
+  const [audioOn, setAudioOn] = useState(false);
 
   useEffect(() => {
     let timeout;
@@ -83,34 +114,52 @@ const RelaxScreen = (props) => {
     if (phaseNum && phaseNum !== 10 && !isPaused) {
       timeout = setTimeout(() => {
         if (seconds === 1 && isRelax) {
-          setPhaseNum(phaseNum + 1);
+          const newPhase = phaseNum + 1;
+          setPhaseNum(newPhase);
           setIsRelax(false);
           if (phaseNum === 9) {
             setSeconds(0);
           } else {
             setSeconds(10);
+            if (audioOn) {
+              Speech.speak(RELAX_AUDIO[newPhase]);
+            }
           }
         } else if (seconds === 1 && !isRelax) {
           setIsRelax(true);
           setSeconds(5);
+          if (audioOn) {
+            Speech.speak('Relax');
+          }
         } else {
-          setSeconds(seconds - 1);
+          const newSeconds = seconds - 1;
+          setSeconds(newSeconds);
+          if (audioOn) {
+            Speech.speak(newSeconds.toString());
+          }
         }
       }, 1000);
     }
     return () => {
       clearTimeout(timeout);
     };
-  }, [seconds, isPaused]);
+  }, [seconds, isPaused, audioOn]);
 
   const onStart = () => {
     setSeconds(10);
     setPhaseNum(1);
     activateKeepAwake('relax');
+    if (audioOn) {
+      Speech.speak(RELAX_AUDIO[1]);
+    }
   };
 
   const togglePause = () => {
     setIsPaused((value) => !value);
+  };
+
+  const toggleAudio = () => {
+    setAudioOn((isOn) => !isOn);
   };
 
   useEffect(() => {
@@ -133,24 +182,36 @@ const RelaxScreen = (props) => {
       </View>
       {!!seconds && <Text style={styles.seconds}>{seconds.toString()}</Text>}
       {phaseNum === 0 && (
-        <MainButton
-          color={colors.shade2}
-          style={styles.button}
-          containerStyle={styles.buttonContainer}
-          onPress={onStart}
-        >
-          <Text style={styles.buttonText}>Start</Text>
-        </MainButton>
+        <View style={styles.container}>
+          <View style={styles.audioRow}>
+            <Text style={styles.label}>Turn Audio Cues On</Text>
+            <Toggle toggleValue={audioOn} toggleHandler={toggleAudio} />
+          </View>
+          <MainButton
+            color={colors.shade2}
+            style={styles.button}
+            containerStyle={styles.buttonContainer}
+            onPress={onStart}
+          >
+            <Text style={styles.buttonText}>Start</Text>
+          </MainButton>
+        </View>
       )}
       {phaseNum > 0 && phaseNum < 10 && (
-        <MainButton
-          color={colors.shade2}
-          style={styles.button}
-          containerStyle={styles.buttonContainer}
-          onPress={togglePause}
-        >
-          <Text style={styles.buttonText}>{isPaused ? 'Resume' : 'Pause'}</Text>
-        </MainButton>
+        <View style={styles.container}>
+          <View style={styles.audioRow}>
+            <Text style={styles.label}>Turn Audio Cues On</Text>
+            <Toggle toggleValue={audioOn} toggleHandler={toggleAudio} />
+          </View>
+          <MainButton
+            color={colors.shade2}
+            style={styles.button}
+            containerStyle={styles.buttonContainer}
+            onPress={togglePause}
+          >
+            <Text style={styles.buttonText}>{isPaused ? 'Resume' : 'Pause'}</Text>
+          </MainButton>
+        </View>
       )}
       {phaseNum === 10 && (
         <MainButton
